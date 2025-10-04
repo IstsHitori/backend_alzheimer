@@ -11,46 +11,53 @@ import { ROLE } from '../constants/role';
 export class User {
   @PrimaryGeneratedColumn('increment')
   id: number;
+
   @Column({
     type: 'varchar',
     length: 50,
-    nullable: false,
   })
   name: string;
+
   @Column({
     type: 'varchar',
     length: 10,
-    nullable: false,
     unique: true,
   })
   userName: string;
+
   @Column({
     type: 'varchar',
     length: 20,
-    nullable: false,
   })
   password: string;
+
   @Column({
     type: 'varchar',
-    length: 20,
-    nullable: false,
+    length: 100,
     unique: true,
   })
   email: string;
+
   @Column({
     type: 'enum',
     enum: ROLE,
-    nullable: false,
   })
   role: ROLE;
+
   @Column({
     default: true,
   })
   isActive: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
+
   @UpdateDateColumn()
   updatedAt: Date;
-  @Column()
+
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
   lastAcces: Date;
 }

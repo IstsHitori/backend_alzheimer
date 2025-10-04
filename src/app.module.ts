@@ -2,10 +2,13 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    //Para las variables de entorno
     ConfigModule.forRoot(),
+    //Para configurar que TypeORM acceda a la BD
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -18,6 +21,7 @@ import { UserModule } from './user/user.module';
       synchronize: true,
     }),
     UserModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
