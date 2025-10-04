@@ -3,7 +3,7 @@
 </p>
 
 
-# Teslo API
+# Alzheimer backend
 
 1. Clonar el proyecto
 ```
