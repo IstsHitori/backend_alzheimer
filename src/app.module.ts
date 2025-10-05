@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ENV_VALIDATION_SCHEMA } from './config/env.validation';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { ENV_VALIDATION_SCHEMA } from './config/env.validation';
     }),
     UserModule,
     AuthModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],
