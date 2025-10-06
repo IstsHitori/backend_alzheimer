@@ -4,10 +4,35 @@ import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { CommonModule } from 'src/common/common.module';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtStrategy } from './strategies/jwt.s.trategy';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService],
-  imports: [TypeOrmModule.forFeature([User]), CommonModule],
+  providers: [AuthService, JwtStrategy],
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    CommonModule,
+
+    PassportModule.register({
+      //Para decirle a passport que strategia vamos a utilizar
+      defaultStrategy: 'jwt',
+    }),
+    //Usamos registerAsync para validar con Joi las variables de entorno de forma asíncrona
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: '2d',
+        },
+      }),
+    }),
+    ConfigModule,
+  ],
+  exports: [JwtStrategy],
 })
 export class AuthModule {}

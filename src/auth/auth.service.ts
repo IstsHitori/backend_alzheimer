@@ -1,8 +1,15 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { LoginUserDto } from './dtos/login-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
+import { AUTH_ERROR_MESSAGES } from './constants';
 import { HashAdapter } from 'src/common/interfaces/hash.interface';
 
 @Injectable()
@@ -16,12 +23,23 @@ export class AuthService {
   ) {}
 
   async signin(loginUserDto: LoginUserDto) {
-    try {
-      this.logger.log('Creating user');
-      loginUserDto.password = await this.hasher.hash(loginUserDto.password);
-      return loginUserDto;
-    } catch (error) {
-      this.logger.error(error);
-    }
+    this.logger.log('Creating user');
+    const findUser = await this.userRepository.findOne({
+      where: {
+        userName: loginUserDto.userName,
+      },
+    });
+    if (!findUser)
+      throw new NotFoundException(AUTH_ERROR_MESSAGES.USER_NOT_FOUND);
+
+    const isValidPassword = await this.hasher.compare(
+      loginUserDto.password,
+      findUser.password,
+    );
+
+    if (!isValidPassword)
+      throw new BadRequestException(AUTH_ERROR_MESSAGES.PASSWORD_INVALID);
+
+    return 'Iniciando sesion..';
   }
 }

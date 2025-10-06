@@ -1,5 +1,5 @@
 import { IsString, MinLength } from 'class-validator';
-import { AUTH_MESSAGES } from '../constants/auth-messages';
+import { AUTH_MESSAGES } from '../constants';
 
 export class LoginUserDto {
   @IsString({ message: AUTH_MESSAGES.USERNAME_IS_STRING })

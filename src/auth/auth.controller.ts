@@ -1,4 +1,11 @@
-import { Body, Controller, Logger, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Logger,
+  Post,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dtos/login-user.dto';
 
@@ -7,11 +14,12 @@ export class AuthController {
   private readonly logger = new Logger(AuthController.name);
   constructor(private readonly authService: AuthService) {}
 
+  @HttpCode(HttpStatus.OK)
   @Post('login')
-  signin(@Body() loginUserDto: LoginUserDto) {
+  async signin(@Body() loginUserDto: LoginUserDto) {
     this.logger.log('Loging user in controller', AuthController.name);
-    const user = this.authService.signin(loginUserDto);
+    const message = await this.authService.signin(loginUserDto);
     this.logger.log('Finalized user in controller');
-    return user;
+    return message;
   }
 }

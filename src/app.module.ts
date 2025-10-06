@@ -40,7 +40,8 @@ import { CommonModule } from './common/common.module';
     // }),
     //Para las variables de entorno
     ConfigModule.forRoot({
-      isGlobal: true,
+      //Para que el uso de COnfigModule sea global y no haya necesidad de importarlo en todos los modulos donde se usen
+      // isGlobal: true,
       validationSchema: ENV_VALIDATION_SCHEMA,
     }),
     //Para configurar que TypeORM acceda a la BD
