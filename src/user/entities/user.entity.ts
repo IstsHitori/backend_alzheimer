@@ -26,8 +26,7 @@ export class User {
   userName: string;
 
   @Column({
-    type: 'varchar',
-    length: 20,
+    type: 'text',
     //Cuando se haga un find, no me traera la contraseña
     // select: false,
   })

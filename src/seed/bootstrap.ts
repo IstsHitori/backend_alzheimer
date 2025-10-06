@@ -4,10 +4,12 @@ import { User } from 'src/user/entities/user.entity';
 import { DataSource } from 'typeorm';
 import { BOOTSTRAP_ADMIN_MESSAGES } from './messages';
 import { ConfigService } from '@nestjs/config';
+import { HashAdapter } from 'src/common/interfaces/hash.interface';
 
 export async function bootstrapAdmin(
   dataSource: DataSource,
   config: ConfigService,
+  hasher: HashAdapter,
 ) {
   const logger = new Logger(bootstrapAdmin.name);
   try {
@@ -23,7 +25,7 @@ export async function bootstrapAdmin(
     const admin = userRepo.create({
       name: config.get<string>('ADMIN_NAME'),
       userName: config.get<string>('ADMIN_USERNAME'),
-      password: config.get<string>('ADMIN_PASSWORD'),
+      password: await hasher.hash(config.get<string>('ADMIN_PASSWORD')!),
       email: config.get<string>('ADMIN_EMAIL'),
       role: ROLE.ADMIN,
     });

@@ -23,7 +23,7 @@ export class AuthService {
   ) {}
 
   async signin(loginUserDto: LoginUserDto) {
-    this.logger.log('Creating user');
+    this.logger.log('Login user');
     const findUser = await this.userRepository.findOne({
       where: {
         userName: loginUserDto.userName,
@@ -36,7 +36,6 @@ export class AuthService {
       loginUserDto.password,
       findUser.password,
     );
-
     if (!isValidPassword)
       throw new BadRequestException(AUTH_ERROR_MESSAGES.PASSWORD_INVALID);
 

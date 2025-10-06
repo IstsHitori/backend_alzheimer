@@ -15,7 +15,6 @@ import { JwtStrategy } from './strategies/jwt.s.trategy';
   imports: [
     TypeOrmModule.forFeature([User]),
     CommonModule,
-
     PassportModule.register({
       //Para decirle a passport que strategia vamos a utilizar
       defaultStrategy: 'jwt',

@@ -4,13 +4,16 @@ import { ValidationPipe } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { bootstrapAdmin } from './seed/bootstrap';
 import { ConfigService } from '@nestjs/config';
+import { HashAdapter } from './common/interfaces/hash.interface';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   //------
+  //El app.get accede a una instancia específica registrada en el contenedor de dependencias de la aplicacion
   const dataSource = app.get(DataSource);
   const config = app.get(ConfigService);
-  await bootstrapAdmin(dataSource, config);
+  const hasher = app.get<HashAdapter>('HashAdapter');
+  await bootstrapAdmin(dataSource, config, hasher);
   //------
   // app.useLogger(app.get(Logger));
   app.setGlobalPrefix('api/v1');
