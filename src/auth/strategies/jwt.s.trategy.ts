@@ -30,6 +30,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       where: {
         id,
       },
+      select: {
+        password: false,
+      },
     });
     if (!findUser)
       throw new UnauthorizedException(AUTH_ERROR_MESSAGES.UNHAUTORIZED);

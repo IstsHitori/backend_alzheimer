@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
+import { AUTH_ERROR_MESSAGES } from 'src/auth/constants';
 import { META_ROLES } from 'src/auth/constants/meta-roles';
 import { User } from 'src/user/entities/user.entity';
 
@@ -18,7 +19,8 @@ export class UserRoleGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const req = context.switchToHttp().getRequest<{ user: User }>();
 
-    if (!req.user) throw new BadRequestException('User not found (request)');
+    if (!req.user)
+      throw new BadRequestException(AUTH_ERROR_MESSAGES.USER_NOT_FOUND_GUARD);
     //Para acceder a la meta data del controlador
     const validRoles: string[] = this.reflector.get(
       META_ROLES,
@@ -29,7 +31,7 @@ export class UserRoleGuard implements CanActivate {
     if (validRoles.length === 0) return true;
 
     if (!validRoles.includes(req.user.role))
-      throw new ForbiddenException('User needs a valid role');
+      throw new ForbiddenException(AUTH_ERROR_MESSAGES.VALID_ROLE);
 
     console.log('pasó..');
     return true;
