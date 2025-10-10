@@ -1,4 +1,6 @@
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
@@ -28,7 +30,7 @@ export class User {
   @Column({
     type: 'text',
     //Cuando se haga un find, no me traera la contraseña
-    // select: false,
+    select: false,
   })
   password: string;
 
@@ -61,4 +63,14 @@ export class User {
     nullable: true,
   })
   lastAcces: Date;
+
+  @BeforeInsert()
+  checkFieldsBeforeInsert() {
+    this.email = this.email.trim().toLowerCase();
+  }
+
+  @BeforeUpdate()
+  checkFieldsBeforeUpdate() {
+    this.email = this.email.trim().toLowerCase();
+  }
 }

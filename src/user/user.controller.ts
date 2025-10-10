@@ -10,7 +10,10 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 
+//Para especificar que cualquiera que use cualquier ruta de estas debe estar atenticado
+@Auth()
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
