@@ -5,6 +5,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ENV_VALIDATION_SCHEMA } from './config/env.validation';
 import { CommonModule } from './common/common.module';
+import { PatientModule } from './patient/patient.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { CommonModule } from './common/common.module';
     UserModule,
     AuthModule,
     CommonModule,
+    PatientModule,
   ],
   controllers: [],
   providers: [],

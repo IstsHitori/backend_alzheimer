@@ -1,0 +1,74 @@
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { EDUCATION_LEVEL, GENDER, RISK_LEVEL } from '../constants';
+import { getAge } from '../helpers/get-age';
+import { Condition } from './condition.entity';
+
+@Entity('Patient')
+export class Patient {
+  @PrimaryGeneratedColumn('increment')
+  id: number;
+
+  @Column({
+    type: 'varchar',
+    length: 50,
+  })
+  fullName: string;
+
+  @Column({
+    type: 'date',
+    nullable: true,
+  })
+  birthDate: Date;
+
+  @Column({
+    type: 'int',
+  })
+  age: number;
+
+  @Column({
+    type: 'enum',
+    enum: GENDER,
+  })
+  gender: GENDER;
+
+  @Column({
+    type: 'enum',
+    enum: EDUCATION_LEVEL,
+  })
+  educationLevel: EDUCATION_LEVEL;
+
+  @Column({
+    type: 'enum',
+    enum: RISK_LEVEL,
+    nullable: true,
+  })
+  riskLevel: RISK_LEVEL;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @OneToMany(() => Condition, condition => condition.patient)
+  conditions: Condition[];
+
+  @BeforeInsert()
+  checkAgeInsert() {
+    this.age = getAge(this.birthDate);
+  }
+
+  @BeforeUpdate()
+  checkAgeUpdates() {
+    this.age = getAge(this.birthDate);
+  }
+}

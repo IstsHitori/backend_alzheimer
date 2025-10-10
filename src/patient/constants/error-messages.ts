@@ -1,0 +1,1 @@
+export enum PATIENT_ERROR_MESSAGES {}
