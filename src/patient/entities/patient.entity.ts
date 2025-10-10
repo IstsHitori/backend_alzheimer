@@ -11,6 +11,7 @@ import {
 import { EDUCATION_LEVEL, GENDER, RISK_LEVEL } from '../constants';
 import { getAge } from '../helpers/get-age';
 import { Condition } from './condition.entity';
+import { CurrentMedication } from './current-medications.entity';
 
 @Entity('Patient')
 export class Patient {
@@ -61,6 +62,12 @@ export class Patient {
 
   @OneToMany(() => Condition, condition => condition.patient)
   conditions: Condition[];
+
+  @OneToMany(
+    () => CurrentMedication,
+    currentMedication => currentMedication.patient,
+  )
+  currentMedications: CurrentMedication[];
 
   @BeforeInsert()
   checkAgeInsert() {
