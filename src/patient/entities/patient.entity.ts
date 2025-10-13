@@ -15,6 +15,7 @@ import { Condition } from './condition.entity';
 import { CurrentMedication } from './current-medications.entity';
 import { FamilyBackgrounds } from './family-backgrounds.entity';
 import { SymptomsPresent } from './symptoms-present.entity';
+import { CognitiveEvaluation } from './cognitive-evaluation.entity';
 
 @Entity('Patient')
 export class Patient {
@@ -81,6 +82,12 @@ export class Patient {
 
   @OneToOne(() => SymptomsPresent, symptomsPresent => symptomsPresent.patient)
   symptomsPresent: SymptomsPresent;
+
+  @OneToOne(
+    () => CognitiveEvaluation,
+    cognitiveEvaluation => cognitiveEvaluation.patient,
+  )
+  cognitiveEvaluation: CognitiveEvaluation;
 
   @BeforeInsert()
   checkAgeInsert() {
