@@ -6,6 +6,7 @@ import { Condition, CurrentMedication, Patient } from './entities';
 import { FamilyMember } from './entities/family-member.entity';
 import { FamilyMemberBackgrounds } from './entities/family-member-backgrounds.entity';
 import { FamilyBackgrounds } from './entities/family-backgrounds.entity';
+import { SymptomsPresent } from './entities/symptoms-present.entity';
 
 @Module({
   controllers: [PatientController],
@@ -18,6 +19,7 @@ import { FamilyBackgrounds } from './entities/family-backgrounds.entity';
       FamilyMember,
       FamilyMemberBackgrounds,
       FamilyBackgrounds,
+      SymptomsPresent,
     ]),
   ],
 })

@@ -1,4 +1,10 @@
-import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { FamilyBackgrounds } from './family-backgrounds.entity';
 import { FamilyMember } from './family-member.entity';
 
@@ -6,6 +12,13 @@ import { FamilyMember } from './family-member.entity';
 export class FamilyMemberBackgrounds {
   @PrimaryGeneratedColumn('increment')
   id: number;
+  @Index('IDX_fmb_familyBackground', ['familyBackgroundId'])
+  @Column()
+  familyBackgroundId: number;
+
+  @Index('IDX_fmb_familyMember', ['familyMemberId'])
+  @Column()
+  familyMemberId: number;
 
   @ManyToOne(
     () => FamilyBackgrounds,

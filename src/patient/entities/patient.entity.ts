@@ -14,6 +14,7 @@ import { getAge } from '../helpers/get-age';
 import { Condition } from './condition.entity';
 import { CurrentMedication } from './current-medications.entity';
 import { FamilyBackgrounds } from './family-backgrounds.entity';
+import { SymptomsPresent } from './symptoms-present.entity';
 
 @Entity('Patient')
 export class Patient {
@@ -77,6 +78,9 @@ export class Patient {
     familyBackgrounds => familyBackgrounds.patient,
   )
   familyBackground: FamilyBackgrounds;
+
+  @OneToOne(() => SymptomsPresent, symptomsPresent => symptomsPresent.patient)
+  symptomsPresent: SymptomsPresent;
 
   @BeforeInsert()
   checkAgeInsert() {
