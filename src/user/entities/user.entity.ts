@@ -4,10 +4,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { ROLE } from '../constants/role';
+import { Analysis } from 'src/analysis/entities';
 
 @Entity('User')
 export class User {
@@ -63,6 +65,9 @@ export class User {
     nullable: true,
   })
   lastAcces: Date;
+
+  @OneToMany(() => Analysis, analisys => analisys.user)
+  analisys: Analysis[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {

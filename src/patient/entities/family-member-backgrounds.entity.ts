@@ -5,8 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { FamilyBackgrounds } from './family-backgrounds.entity';
-import { FamilyMember } from './family-member.entity';
+import { FamilyBackgrounds, FamilyMember } from '.';
 
 @Entity('Family_member_backgrounds')
 export class FamilyMemberBackgrounds {

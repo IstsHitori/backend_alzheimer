@@ -11,11 +11,14 @@ import {
 } from 'typeorm';
 import { EDUCATION_LEVEL, GENDER, RISK_LEVEL } from '../constants';
 import { getAge } from '../helpers/get-age';
-import { Condition } from './condition.entity';
-import { CurrentMedication } from './current-medications.entity';
-import { FamilyBackgrounds } from './family-backgrounds.entity';
-import { SymptomsPresent } from './symptoms-present.entity';
-import { CognitiveEvaluation } from './cognitive-evaluation.entity';
+import {
+  CognitiveEvaluation,
+  Condition,
+  CurrentMedication,
+  FamilyBackgrounds,
+  SymptomsPresent,
+} from '.';
+import { PatientImages } from 'src/analysis/entities';
 
 @Entity('Patient')
 export class Patient {
@@ -88,6 +91,9 @@ export class Patient {
     cognitiveEvaluation => cognitiveEvaluation.patient,
   )
   cognitiveEvaluation: CognitiveEvaluation;
+
+  @OneToMany(() => PatientImages, patientImages => patientImages.patient)
+  patientImage: PatientImages[];
 
   @BeforeInsert()
   checkAgeInsert() {
