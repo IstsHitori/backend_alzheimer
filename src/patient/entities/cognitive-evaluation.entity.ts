@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -31,5 +32,8 @@ export class CognitiveEvaluation {
   updatedAt: number;
 
   @OneToOne(() => Patient, patient => patient.cognitiveEvaluation)
+  @JoinColumn({
+    name: 'patientId',
+  })
   patient: Patient;
 }
