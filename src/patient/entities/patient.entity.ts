@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -12,6 +13,7 @@ import { EDUCATION_LEVEL, GENDER, RISK_LEVEL } from '../constants';
 import { getAge } from '../helpers/get-age';
 import { Condition } from './condition.entity';
 import { CurrentMedication } from './current-medications.entity';
+import { FamilyBackgrounds } from './family-backgrounds.entity';
 
 @Entity('Patient')
 export class Patient {
@@ -32,6 +34,7 @@ export class Patient {
 
   @Column({
     type: 'int',
+    nullable: true,
   })
   age: number;
 
@@ -68,6 +71,12 @@ export class Patient {
     currentMedication => currentMedication.patient,
   )
   currentMedications: CurrentMedication[];
+
+  @OneToOne(
+    () => FamilyBackgrounds,
+    familyBackgrounds => familyBackgrounds.patient,
+  )
+  familyBackground: FamilyBackgrounds;
 
   @BeforeInsert()
   checkAgeInsert() {
