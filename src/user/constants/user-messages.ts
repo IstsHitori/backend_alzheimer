@@ -13,3 +13,17 @@ export enum USER_MESSAGES {
   EMAIL_MAX_LENGTH = 'El correo electrónico no debe exceder los 100 caracteres.',
   ROLE_IS_ENUM = 'El rol debe ser un valor válido.',
 }
+
+export enum USER_ERROR_MESSAGES {
+  USER_ALREADY_EXIST = 'Este usuario ya existe',
+  ADMIN_ALREADY_EXIST = 'Ya existe un usuario con Rol de Administrador',
+  USER_NOT_FOUND = 'Usuario no encontrado',
+  EMAIL_IN_USE = 'Este email ya está en uso',
+  USERNAME_IN_USE = 'Este nombre de usuario ya está en uso',
+}
+
+export enum USER_SUCCES_MESSAGES {
+  USER_CREATED = 'Usuario creado correctamente',
+  USER_UPDATED = 'Usuario actualizado correctamente',
+  USER_DELETED = 'Usuario eliminado correctamente',
+}
