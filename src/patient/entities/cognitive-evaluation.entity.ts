@@ -31,7 +31,9 @@ export class CognitiveEvaluation {
   @UpdateDateColumn()
   updatedAt: number;
 
-  @OneToOne(() => Patient, patient => patient.cognitiveEvaluation)
+  @OneToOne(() => Patient, patient => patient.cognitiveEvaluation, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({
     name: 'patientId',
   })

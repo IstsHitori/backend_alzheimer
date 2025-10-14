@@ -68,28 +68,21 @@ export class Patient {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Condition, condition => condition.patient)
+  @OneToMany(() => Condition, condition => condition.patient, { cascade: true })
   conditions: Condition[];
 
-  @OneToMany(
-    () => CurrentMedication,
-    currentMedication => currentMedication.patient,
-  )
+  @OneToMany(() => CurrentMedication, medication => medication.patient, {
+    cascade: true,
+  })
   currentMedications: CurrentMedication[];
 
-  @OneToOne(
-    () => FamilyBackgrounds,
-    familyBackgrounds => familyBackgrounds.patient,
-  )
+  @OneToOne(() => FamilyBackgrounds, fb => fb.patient, { cascade: true })
   familyBackground: FamilyBackgrounds;
 
-  @OneToOne(() => SymptomsPresent, symptomsPresent => symptomsPresent.patient)
+  @OneToOne(() => SymptomsPresent, sp => sp.patient, { cascade: true })
   symptomsPresent: SymptomsPresent;
 
-  @OneToOne(
-    () => CognitiveEvaluation,
-    cognitiveEvaluation => cognitiveEvaluation.patient,
-  )
+  @OneToOne(() => CognitiveEvaluation, ce => ce.patient, { cascade: true })
   cognitiveEvaluation: CognitiveEvaluation;
 
   @OneToMany(() => PatientImages, patientImages => patientImages.patient)

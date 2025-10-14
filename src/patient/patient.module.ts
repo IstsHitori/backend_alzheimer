@@ -8,6 +8,7 @@ import { FamilyMemberBackgrounds } from './entities/family-member-backgrounds.en
 import { FamilyBackgrounds } from './entities/family-backgrounds.entity';
 import { SymptomsPresent } from './entities/symptoms-present.entity';
 import { CognitiveEvaluation } from './entities/cognitive-evaluation.entity';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   controllers: [PatientController],
@@ -23,6 +24,7 @@ import { CognitiveEvaluation } from './entities/cognitive-evaluation.entity';
       SymptomsPresent,
       CognitiveEvaluation,
     ]),
+    AuthModule,
   ],
 })
 export class PatientModule {}

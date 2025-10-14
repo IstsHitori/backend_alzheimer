@@ -23,13 +23,14 @@ export class FamilyBackgrounds {
   })
   hasDementialFamily: boolean;
 
-  @OneToOne(() => Patient, patient => patient.familyBackground)
+  @OneToOne(() => Patient, patient => patient.familyBackground, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'patientId' })
   patient: Patient;
 
-  @OneToMany(
-    () => FamilyMemberBackgrounds,
-    familyMemberBackgrounds => familyMemberBackgrounds.familyBackground,
-  )
+  @OneToMany(() => FamilyMemberBackgrounds, fmb => fmb.familyBackground, {
+    cascade: true,
+  })
   familyMemberBackgrounds: FamilyMemberBackgrounds[];
 }

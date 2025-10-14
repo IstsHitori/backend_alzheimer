@@ -26,4 +26,5 @@ export enum PATIENT_ERROR_MESSAGES {
   DISORIENTATION_BOOLEAN = 'El valor de desorientación debe ser un booleano',
   PERSONALITY_CHANGES_BOOLEAN = 'El valor de cambios de personalidad debe ser un booleano',
   TEMPORAL_CONFUSION_BOOLEAN = 'El valor de confusión temporal debe ser un booleano',
+  PATIENT_NOT_FOUND = 'Paciente no encontrado',
 }
