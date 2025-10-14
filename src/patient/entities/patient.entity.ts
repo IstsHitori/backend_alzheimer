@@ -33,7 +33,6 @@ export class Patient {
 
   @Column({
     type: 'date',
-    nullable: true,
   })
   birthDate: Date;
 
@@ -58,6 +57,7 @@ export class Patient {
   @Column({
     type: 'enum',
     enum: RISK_LEVEL,
+    default: RISK_LEVEL.LOW,
     nullable: true,
   })
   riskLevel: RISK_LEVEL;
