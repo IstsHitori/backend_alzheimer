@@ -95,6 +95,6 @@ export class Patient {
 
   @BeforeUpdate()
   checkAgeUpdates() {
-    this.age = getAge(this.birthDate);
+    if (this.birthDate) this.age = getAge(this.birthDate);
   }
 }

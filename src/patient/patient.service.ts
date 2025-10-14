@@ -111,9 +111,12 @@ export class PatientService {
         'p.id AS id',
         'p.fullName AS "fullName"',
         'p.birthDate AS "birthDate"',
+        'p.age AS age',
         'p.gender AS gender',
         'p.educationLevel AS "educationLevel"',
         'p.riskLevel AS "riskLevel"',
+        'p.createdAt AS "createdAt"',
+        'p.updatedAt AS "updatedAt"',
         'fb.hasAlzheimerFamily AS "hasAlzheimerFamily"',
         'fb.hasDementialFamily AS "hasDementialFamily"',
         'sp.memoryLoss AS "memoryLoss"',
@@ -124,16 +127,18 @@ export class PatientService {
         'sp.temporalConfusion AS "temporalConfusion"',
         'ce.mmse AS mmse',
         'ce.moca AS moca',
+        'ce.updatedAt AS "cognitiveUpdatedAt"',
         "STRING_AGG(DISTINCT c.name, ', ') AS condiciones",
         "STRING_AGG(DISTINCT cm.name, ', ') AS medicamentos",
         "STRING_AGG(DISTINCT fm.name::text, ', ') AS familiares",
       ])
       .groupBy(
-        `p.id, p.fullName, p.birthDate, p.gender, p.educationLevel, p.riskLevel,
+        `p.id, p.fullName, p.birthDate, p.age, p.gender, p.educationLevel, p.riskLevel,
+       p.createdAt, p.updatedAt,
        fb.hasAlzheimerFamily, fb.hasDementialFamily,
        sp.memoryLoss, sp.lenguageProblems, sp.difficultyWithTasks,
        sp.disorientation, sp.personalityChanges, sp.temporalConfusion,
-       ce.mmse, ce.moca`,
+       ce.mmse, ce.moca, ce.updatedAt`,
       )
       .getRawMany();
 
@@ -141,9 +146,12 @@ export class PatientService {
       id: p.id,
       fullName: p.fullName,
       birthDate: p.birthDate,
+      age: p.age,
       gender: p.gender,
       educationLevel: p.educationLevel,
       riskLevel: p.riskLevel,
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt,
       familyBackground: {
         hasAlzheimerFamily: p.hasAlzheimerFamily ?? false,
         hasDementialFamily: p.hasDementialFamily ?? false,
@@ -162,6 +170,7 @@ export class PatientService {
       cognitiveEvaluation: {
         mmse: p.mmse ?? null,
         moca: p.moca ?? null,
+        updatedAt: p.cognitiveUpdatedAt ?? null,
       },
       conditions: p.condiciones
         ? p.condiciones.split(', ').filter(Boolean)
@@ -187,14 +196,105 @@ export class PatientService {
         cognitiveEvaluation: true,
       },
     });
-    if (!patient)
+
+    if (!patient) {
       throw new NotFoundException(PATIENT_ERROR_MESSAGES.PATIENT_NOT_FOUND);
+    }
 
     return this.formatPatient(patient);
   }
 
-  update(id: number, updatePatientDto: UpdatePatientDto) {
-    return `This action updates a #${id} patient`;
+  async update(id: number, updatePatientDto: UpdatePatientDto) {
+    const {
+      conditions,
+      currentMedications,
+      familyBackground,
+      symptomsPresent,
+      ...patientData
+    } = updatePatientDto;
+
+    // Cargar el paciente con todas sus relaciones
+    const foundPatient = await this.findOneWithRelations(id);
+
+    // 1. Actualizar datos básicos del paciente
+    Object.assign(foundPatient, patientData);
+
+    // 2. Actualizar condiciones (reemplazar completamente)
+    if (conditions !== undefined) {
+      foundPatient.conditions = conditions.map(c =>
+        this.patientRepository.manager.create(Condition, c),
+      );
+    }
+
+    // 3. Actualizar medicamentos (reemplazar completamente)
+    if (currentMedications !== undefined) {
+      foundPatient.currentMedications = currentMedications.map(m =>
+        this.patientRepository.manager.create(CurrentMedication, m),
+      );
+    }
+
+    // 4. Actualizar síntomas
+    if (symptomsPresent !== undefined) {
+      if (foundPatient.symptomsPresent) {
+        // Si ya existe, actualizar sus propiedades
+        Object.assign(foundPatient.symptomsPresent, symptomsPresent);
+      } else {
+        // Si no existe, crear nuevo
+        foundPatient.symptomsPresent = this.patientRepository.manager.create(
+          SymptomsPresent,
+          symptomsPresent,
+        );
+      }
+    }
+
+    // 5. Actualizar antecedentes familiares
+    if (familyBackground !== undefined) {
+      if (foundPatient.familyBackground) {
+        // Si ya existe el family background, actualizar
+        foundPatient.familyBackground.hasAlzheimerFamily =
+          familyBackground.hasAlzheimerFamily ??
+          foundPatient.familyBackground.hasAlzheimerFamily;
+        foundPatient.familyBackground.hasDementialFamily =
+          familyBackground.hasDementialFamily ??
+          foundPatient.familyBackground.hasDementialFamily;
+
+        // Actualizar family member backgrounds si se proporcionan
+        if (familyBackground.familyMemberBackgrounds !== undefined) {
+          foundPatient.familyBackground.familyMemberBackgrounds =
+            familyBackground.familyMemberBackgrounds.map(fmb =>
+              this.patientRepository.manager.create(FamilyMemberBackgrounds, {
+                familyMember: { id: fmb.familyMemberId } as FamilyMember,
+              }),
+            );
+        }
+      } else {
+        // Si no existe family background, crear uno nuevo
+        const familyBackgroundEntity = this.patientRepository.manager.create(
+          FamilyBackgrounds,
+          {
+            hasAlzheimerFamily: familyBackground.hasAlzheimerFamily,
+            hasDementialFamily: familyBackground.hasDementialFamily,
+          },
+        );
+
+        // Agregar family member backgrounds si existen
+        if (familyBackground.familyMemberBackgrounds?.length) {
+          familyBackgroundEntity.familyMemberBackgrounds =
+            familyBackground.familyMemberBackgrounds.map(fmb =>
+              this.patientRepository.manager.create(FamilyMemberBackgrounds, {
+                familyMember: { id: fmb.familyMemberId } as FamilyMember,
+              }),
+            );
+        }
+
+        foundPatient.familyBackground = familyBackgroundEntity;
+      }
+    }
+
+    // 6. Guardar todos los cambios (cascade se encarga de las relaciones)
+    await this.patientRepository.save(foundPatient);
+
+    return PATIENT_SUCCES_MESSAGES.PATIENT_UPDATED;
   }
 
   async remove(id: number) {
@@ -214,25 +314,61 @@ export class PatientService {
     return foundPatient;
   }
 
+  private async findOneWithRelations(id: number) {
+    const foundPatient = await this.patientRepository.findOne({
+      where: { id },
+      relations: [
+        'conditions',
+        'currentMedications',
+        'familyBackground',
+        'familyBackground.familyMemberBackgrounds',
+        'symptomsPresent',
+        'cognitiveEvaluation',
+      ],
+    });
+
+    if (!foundPatient) {
+      throw new NotFoundException(PATIENT_ERROR_MESSAGES.PATIENT_NOT_FOUND);
+    }
+
+    return foundPatient;
+  }
+
   private formatPatient(patient: Patient) {
     return {
       id: patient.id,
       fullName: patient.fullName,
       birthDate: patient.birthDate,
+      age: patient.age,
       gender: patient.gender,
       educationLevel: patient.educationLevel,
       riskLevel: patient.riskLevel,
+      createdAt: patient.createdAt,
+      updatedAt: patient.updatedAt,
+      conditions:
+        patient.conditions?.map(c => ({
+          id: c.id,
+          name: c.name,
+        })) ?? [],
+      currentMedications:
+        patient.currentMedications?.map(m => ({
+          id: m.id,
+          name: m.name,
+        })) ?? [],
       familyBackground: {
+        id: patient.familyBackground?.id,
         hasAlzheimerFamily:
           patient.familyBackground?.hasAlzheimerFamily ?? false,
         hasDementialFamily:
           patient.familyBackground?.hasDementialFamily ?? false,
         familyMembers:
-          patient.familyBackground?.familyMemberBackgrounds?.map(
-            fmb => fmb.familyMember.name,
-          ) ?? [],
+          patient.familyBackground?.familyMemberBackgrounds?.map(fmb => ({
+            id: fmb.id,
+            name: fmb.familyMember.name,
+          })) ?? [],
       },
       symptomsPresent: {
+        id: patient.symptomsPresent?.id,
         memoryLoss: patient.symptomsPresent?.memoryLoss ?? false,
         lenguageProblems: patient.symptomsPresent?.lenguageProblems ?? false,
         difficultyWithTasks:
@@ -243,11 +379,11 @@ export class PatientService {
         temporalConfusion: patient.symptomsPresent?.temporalConfusion ?? false,
       },
       cognitiveEvaluation: {
+        id: patient.cognitiveEvaluation?.id,
         mmse: patient.cognitiveEvaluation?.mmse ?? null,
         moca: patient.cognitiveEvaluation?.moca ?? null,
+        updatedAt: patient.cognitiveEvaluation?.updatedAt ?? null,
       },
-      conditions: patient.conditions?.map(c => c.name) ?? [],
-      medications: patient.currentMedications?.map(cm => cm.name) ?? [],
     };
   }
 }
