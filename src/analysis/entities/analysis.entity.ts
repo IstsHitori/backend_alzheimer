@@ -19,6 +19,8 @@ export class Analysis {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => PatientImages, patientImages => patientImages.analysis)
-  patientImage: PatientImages;
+  @OneToMany(() => PatientImages, patientImages => patientImages.analysis, {
+    eager: true,
+  })
+  patientImage: PatientImages[];
 }

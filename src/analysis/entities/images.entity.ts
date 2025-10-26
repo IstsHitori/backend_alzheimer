@@ -17,9 +17,17 @@ export class Image {
   })
   imageUrl: string;
 
+  @Column({
+    type: 'varchar',
+    length: 100,
+  })
+  fileName: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => PatientImages, patientImages => patientImages.image)
-  patientImage: PatientImages;
+  @OneToMany(() => PatientImages, patientImages => patientImages.image, {
+    cascade: true,
+  })
+  patientImage: PatientImages[];
 }
