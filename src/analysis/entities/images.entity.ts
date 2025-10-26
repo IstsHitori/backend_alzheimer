@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { PatientImages } from './patient-images.entity';
+import { ImageAnalysis } from '.';
 
 @Entity('Image')
 export class Image {
@@ -23,11 +23,9 @@ export class Image {
   })
   fileName: string;
 
+  @OneToMany(() => ImageAnalysis, imageAnalysis => imageAnalysis.image)
+  imageAnalysis: ImageAnalysis[];
+
   @CreateDateColumn()
   createdAt: Date;
-
-  @OneToMany(() => PatientImages, patientImages => patientImages.image, {
-    cascade: true,
-  })
-  patientImage: PatientImages[];
 }

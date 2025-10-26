@@ -67,7 +67,7 @@ export class User {
   lastAcces: Date;
 
   @OneToMany(() => Analysis, analisys => analisys.user)
-  analisys: Analysis[];
+  analysis: Analysis[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {

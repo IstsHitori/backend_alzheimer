@@ -18,7 +18,7 @@ import {
   FamilyBackgrounds,
   SymptomsPresent,
 } from '.';
-import { PatientImages } from 'src/analysis/entities';
+import { Analysis } from 'src/analysis/entities';
 
 @Entity('Patient')
 export class Patient {
@@ -85,8 +85,8 @@ export class Patient {
   @OneToOne(() => CognitiveEvaluation, ce => ce.patient, { cascade: true })
   cognitiveEvaluation: CognitiveEvaluation;
 
-  @OneToMany(() => PatientImages, patientImages => patientImages.patient)
-  patientImage: PatientImages[];
+  @OneToMany(() => Analysis, analysis => analysis.patient)
+  analysis: Analysis[];
 
   @BeforeInsert()
   checkAgeInsert() {

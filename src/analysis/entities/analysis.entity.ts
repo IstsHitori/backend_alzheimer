@@ -1,3 +1,4 @@
+import { Patient } from 'src/patient/entities';
 import { User } from 'src/user/entities/user.entity';
 import {
   CreateDateColumn,
@@ -6,21 +7,26 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { PatientImages } from './patient-images.entity';
+import { ImageAnalysis } from '.';
 
 @Entity('Analysis')
 export class Analysis {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @ManyToOne(() => User, user => user.analisys)
+  @ManyToOne(() => User, user => user.analysis)
   user: User;
+
+  @ManyToOne(() => Patient, patient => patient.analysis, {
+    onDelete: 'CASCADE',
+  })
+  patient: Patient;
+
+  @OneToMany(() => ImageAnalysis, imageAnalysis => imageAnalysis.analysis, {
+    cascade: true,
+  })
+  imageAnalysis: ImageAnalysis[];
 
   @CreateDateColumn()
   createdAt: Date;
-
-  @OneToMany(() => PatientImages, patientImages => patientImages.analysis, {
-    eager: true,
-  })
-  patientImage: PatientImages[];
 }
