@@ -1,1 +1,17 @@
-export class CreateAnalysisDto {}
+// create-analysis.dto.ts
+import { IsArray, IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import { CreateImageAnalysisDto } from './create-image-analysis.dto';
+import { ANALYSIS_ERROR_MESSAGES } from '../constants/error-messages';
+
+export class CreateAnalysisDto {
+  @IsNumber({}, { message: ANALYSIS_ERROR_MESSAGES.PATIENT_ID_NUMBER })
+  @IsNotEmpty({ message: ANALYSIS_ERROR_MESSAGES.PATIENT_ID_REQUIRED })
+  patientId: number;
+
+  @IsArray({ message: ANALYSIS_ERROR_MESSAGES.IMAGE_ANALYSES_ARRAY })
+  @IsNotEmpty({ message: ANALYSIS_ERROR_MESSAGES.IMAGE_ANALYSES_REQUIRED })
+  @ValidateNested({ each: true })
+  @Type(() => CreateImageAnalysisDto)
+  imageAnalyses: CreateImageAnalysisDto[];
+}
