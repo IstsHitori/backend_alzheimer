@@ -1,11 +1,3 @@
-export interface IHomeStats {
-  analysisTotal: number;
-  IAPresicion: number;
-  patients: number;
-  reports: number;
-}
-
-//Medical dashboard
 export interface IResume {
   analysisTotal: number;
   healthyCases: IHealthyCases;

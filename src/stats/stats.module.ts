@@ -6,10 +6,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Analysis, ImageAnalysis } from 'src/analysis/entities';
 import { Patient } from 'src/patient/entities';
 import { Report } from 'src/reports/entities/report.entity';
+import { HomeStatsService } from './home-stats/home-stats.service';
+import { MedicalStatsService } from './medical-stats/medical-stats.service';
 
 @Module({
   controllers: [StatsController],
-  providers: [StatsService],
+  providers: [StatsService, HomeStatsService, MedicalStatsService],
   imports: [
     AuthModule,
     TypeOrmModule.forFeature([Analysis, Patient, ImageAnalysis, Report]),
