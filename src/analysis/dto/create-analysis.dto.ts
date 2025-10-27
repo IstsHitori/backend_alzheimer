@@ -13,5 +13,5 @@ export class CreateAnalysisDto {
   @IsNotEmpty({ message: ANALYSIS_ERROR_MESSAGES.IMAGE_ANALYSES_REQUIRED })
   @ValidateNested({ each: true })
   @Type(() => CreateImageAnalysisDto)
-  imageAnalyses: CreateImageAnalysisDto[];
+  imageAnalysis: CreateImageAnalysisDto[];
 }

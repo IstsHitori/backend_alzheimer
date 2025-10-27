@@ -21,4 +21,8 @@ export const ENV_VALIDATION_SCHEMA = joi.object({
   SEED_ADMIN: joi.boolean().default(true),
   //JWT
   JWT_SECRET: joi.string().required(),
+  //CLOUDINARY
+  CLOUD_NAME: joi.string().required(),
+  CLOUD_API_KEY: joi.string().required(),
+  CLOUD_API_SECRET: joi.string().required(),
 });

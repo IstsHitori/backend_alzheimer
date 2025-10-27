@@ -8,6 +8,7 @@ import { CommonModule } from './common/common.module';
 import { PatientModule } from './patient/patient.module';
 import { AnalysisModule } from './analysis/analysis.module';
 import { ReportsModule } from './reports/reports.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { ReportsModule } from './reports/reports.module';
     PatientModule,
     AnalysisModule,
     ReportsModule,
+    CloudinaryModule,
   ],
   controllers: [],
   providers: [],

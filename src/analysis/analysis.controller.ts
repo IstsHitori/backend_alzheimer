@@ -3,13 +3,12 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AnalysisService } from './analysis.service';
 import { CreateAnalysisDto } from './dto/create-analysis.dto';
-import { UpdateAnalysisDto } from './dto/update-analysis.dto';
 
 @Controller('analysis')
 export class AnalysisController {
@@ -26,20 +25,20 @@ export class AnalysisController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.analysisService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.analysisService.findOne(id);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateAnalysisDto: UpdateAnalysisDto,
-  ) {
-    return this.analysisService.update(+id, updateAnalysisDto);
-  }
+  // @Patch(':id')
+  // update(
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @Body() updateAnalysisDto: UpdateAnalysisDto,
+  // ) {
+  //   return this.analysisService.update(id, updateAnalysisDto);
+  // }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.analysisService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.analysisService.remove(id);
   }
 }
