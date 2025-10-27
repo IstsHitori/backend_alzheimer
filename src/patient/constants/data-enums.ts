@@ -12,6 +12,7 @@ export enum EDUCATION_LEVEL {
 }
 
 export enum RISK_LEVEL {
+  HEALTHY = 'sano',
   LOW = 'bajo',
   MEDIUM = 'medio',
   HIGH = 'alto',

@@ -12,4 +12,8 @@ export class StatsController {
   getHomeStats() {
     return this.statsService.getHomeStats();
   }
+  @Get('medical-dashboard-stats')
+  getMedicalDashboardStats() {
+    return this.statsService.getMedicalDashboardStats();
+  }
 }
