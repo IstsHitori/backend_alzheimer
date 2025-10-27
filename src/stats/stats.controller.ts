@@ -17,9 +17,4 @@ export class StatsController {
   getMedicalDashboardStats() {
     return this.statsService.getMedicalDashboardStats();
   }
-
-  @Get('administration-stats')
-  getAdministrationStats() {
-    return this.statsService.getAdministrationStats();
-  }
 }

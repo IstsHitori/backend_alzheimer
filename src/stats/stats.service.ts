@@ -17,8 +17,4 @@ export class StatsService {
   async getMedicalDashboardStats(): Promise<IMedicalDashboardStats> {
     return this.medicalStats.getStats();
   }
-
-  getAdministrationStats() {
-    return '';
-  }
 }
