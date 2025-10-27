@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CreateReportDto } from './dto/create-report.dto';
 import { Repository } from 'typeorm';
-import { Analysis } from 'src/analysis/entities';
+import { Analysis, ImageAnalysis } from 'src/analysis/entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Patient } from 'src/patient/entities';
 import { Report } from './entities/report.entity';
+import { IHomeStats } from './constants/interfaces';
 
 @Injectable()
 export class ReportsService {
@@ -15,9 +16,11 @@ export class ReportsService {
     private readonly patientRepository: Repository<Patient>,
     @InjectRepository(Report)
     private readonly reportRepository: Repository<Report>,
+    @InjectRepository(ImageAnalysis)
+    private readonly imageAnalysisRepository: Repository<ImageAnalysis>,
   ) {}
   create(createReportDto: CreateReportDto) {
-    return 'This action adds a new report';
+    return '';
   }
 
   findAll() {
@@ -27,9 +30,39 @@ export class ReportsService {
   findOne(id: number) {
     return `This action returns a #${id} report`;
   }
-  getHomeStats() {}
+  async getHomeStats(): Promise<IHomeStats> {
+    //AnalysisToday
+    const analysisTotal = await this.getAnaliysisTotal();
+    //IA presicion
+    const IAPresicion = await this.getAIPresicion();
+    //patients
+    const patients = await this.getPatientsTotal();
+    //reports
+    const reports = await this.getReportsTotal();
 
-  remove(id: number) {
-    return `This action removes a #${id} report`;
+    return { analysisTotal, IAPresicion, patients, reports };
+  }
+
+  private async getAnaliysisTotal(): Promise<number> {
+    const analysies = await this.analysisRepository.find();
+    return analysies.length;
+  }
+  private async getAIPresicion(): Promise<number> {
+    const analysies = await this.imageAnalysisRepository.find();
+
+    const totalConfidence = analysies.reduce(
+      (total, index) => (total += index.confidenceLevel),
+      0,
+    );
+
+    return totalConfidence / analysies.length;
+  }
+  private async getPatientsTotal(): Promise<number> {
+    const patients = await this.patientRepository.find();
+    return patients.length;
+  }
+  private async getReportsTotal(): Promise<number> {
+    const reports = await this.reportRepository.find();
+    return reports.length;
   }
 }

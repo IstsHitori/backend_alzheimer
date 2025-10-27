@@ -9,6 +9,8 @@ import { PatientModule } from './patient/patient.module';
 import { AnalysisModule } from './analysis/analysis.module';
 import { ReportsModule } from './reports/reports.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { StatsModule } from './stats/stats.module';
+import { ActivityModule } from './activity/activity.module';
 
 @Module({
   imports: [
@@ -71,6 +73,8 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     AnalysisModule,
     ReportsModule,
     CloudinaryModule,
+    StatsModule,
+    ActivityModule,
   ],
   controllers: [],
   providers: [],

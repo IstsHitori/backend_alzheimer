@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { ReportsService } from './reports.service';
 import { CreateReportDto } from './dto/create-report.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
@@ -19,18 +19,13 @@ export class ReportsController {
     return this.reportsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reportsService.findOne(+id);
-  }
-
   @Get('home-stats')
   getHomeStats() {
     return this.reportsService.getHomeStats();
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reportsService.remove(+id);
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.reportsService.findOne(+id);
   }
 }
