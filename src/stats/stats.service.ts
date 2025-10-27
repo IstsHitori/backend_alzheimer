@@ -1,26 +1,57 @@
 import { Injectable } from '@nestjs/common';
-import { CreateStatDto } from './dto/create-stat.dto';
-import { UpdateStatDto } from './dto/update-stat.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Report } from 'src/reports/entities/report.entity';
+import { Analysis, ImageAnalysis } from 'src/analysis/entities';
+import { Patient } from 'src/patient/entities';
+import { IHomeStats } from './constants';
 
 @Injectable()
 export class StatsService {
-  create(createStatDto: CreateStatDto) {
-    return 'This action adds a new stat';
+  constructor(
+    @InjectRepository(Analysis)
+    private readonly analysisRepository: Repository<Analysis>,
+    @InjectRepository(Patient)
+    private readonly patientRepository: Repository<Patient>,
+    @InjectRepository(Report)
+    private readonly reportRepository: Repository<Report>,
+    @InjectRepository(ImageAnalysis)
+    private readonly imageAnalysisRepository: Repository<ImageAnalysis>,
+  ) {}
+
+  async getHomeStats(): Promise<IHomeStats> {
+    //AnalysisToday
+    const analysisTotal = await this.getAnaliysisTotal();
+    //IA presicion
+    const IAPresicion = await this.getAIPresicion();
+    //patients
+    const patients = await this.getPatientsTotal();
+    //reports
+    const reports = await this.getReportsTotal();
+
+    return { analysisTotal, IAPresicion, patients, reports };
   }
 
-  findAll() {
-    return `This action returns all stats`;
+  private async getAnaliysisTotal(): Promise<number> {
+    const analysies = await this.analysisRepository.find();
+    return analysies.length;
   }
+  private async getAIPresicion(): Promise<number> {
+    const analysies = await this.imageAnalysisRepository.find();
 
-  findOne(id: number) {
-    return `This action returns a #${id} stat`;
+    const totalConfidence = analysies.reduce(
+      (total, index) => (total += index.confidenceLevel),
+      0,
+    );
+
+    return totalConfidence / analysies.length;
   }
-
-  update(id: number, updateStatDto: UpdateStatDto) {
-    return `This action updates a #${id} stat`;
+  private async getPatientsTotal(): Promise<number> {
+    const patients = await this.patientRepository.find();
+    return patients.length;
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} stat`;
+  private async getReportsTotal(): Promise<number> {
+    const reports = await this.reportRepository.find();
+    return reports.length;
   }
 }

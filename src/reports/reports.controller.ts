@@ -19,10 +19,6 @@ export class ReportsController {
     return this.reportsService.findAll();
   }
 
-  @Get('home-stats')
-  getHomeStats() {
-    return this.reportsService.getHomeStats();
-  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
