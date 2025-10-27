@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Analysis, Image, ImageAnalysis } from './entities';
 import { PatientModule } from 'src/patient/patient.module';
 import { Patient } from 'src/patient/entities';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   controllers: [AnalysisController],
@@ -12,6 +13,7 @@ import { Patient } from 'src/patient/entities';
   imports: [
     TypeOrmModule.forFeature([Analysis, Image, ImageAnalysis, Patient]),
     PatientModule,
+    AuthModule,
   ],
 })
 export class AnalysisModule {}
