@@ -17,12 +17,15 @@ import {
   SymptomsPresent,
 } from './entities';
 import { PATIENT_ERROR_MESSAGES, PATIENT_SUCCES_MESSAGES } from './constants';
+import { ReportsService } from 'src/reports/reports.service';
+import { TYPE_REPORT } from 'src/reports/constants';
 
 @Injectable()
 export class PatientService {
   constructor(
     @InjectRepository(Patient)
     private readonly patientRepository: Repository<Patient>,
+    private readonly reportService: ReportsService,
   ) {}
 
   async create(createPatientDto: CreatePatientDto) {
@@ -92,6 +95,13 @@ export class PatientService {
     );
 
     // 7. Guardar todo
+
+    const report = {
+      name: `Nuevo paciente: ${patient.fullName} registrado`,
+      type: TYPE_REPORT.USER_REPORT,
+    };
+    await this.reportService.create(report);
+
     await this.patientRepository.save(patient);
 
     return PATIENT_SUCCES_MESSAGES.PATIENT_CREATED;

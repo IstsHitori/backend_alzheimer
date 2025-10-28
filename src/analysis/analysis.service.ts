@@ -6,6 +6,8 @@ import { Analysis, Image, ImageAnalysis } from './entities';
 import { Patient } from 'src/patient/entities';
 import { ANALYSIS_SUCCESS_MESSAGES } from './constants';
 import { PATIENT_ERROR_MESSAGES } from 'src/patient/constants';
+import { ReportsService } from 'src/reports/reports.service';
+import { TYPE_REPORT } from 'src/reports/constants';
 
 @Injectable()
 export class AnalysisService {
@@ -18,6 +20,7 @@ export class AnalysisService {
     private imageAnalysisRepository: Repository<ImageAnalysis>,
     @InjectRepository(Patient)
     private patientRepository: Repository<Patient>,
+    private readonly reportService: ReportsService,
   ) {}
 
   async create(createAnalysisDto: CreateAnalysisDto, userId: number) {
@@ -84,6 +87,13 @@ export class AnalysisService {
 
     // Guardar todos los análisis de imágenes
     await this.imageAnalysisRepository.save(imageAnalysisEntities);
+
+    //Generar el reporte
+    const report = {
+      name: `Análisis completado - Paciente: ${patient.fullName}`,
+      type: TYPE_REPORT.ANALYSIS_REPORT,
+    };
+    await this.reportService.create(report);
 
     // Retornar el análisis completo
     return await this.findOne(savedAnalysis.id);

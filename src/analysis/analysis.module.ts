@@ -6,6 +6,7 @@ import { Analysis, Image, ImageAnalysis } from './entities';
 import { PatientModule } from 'src/patient/patient.module';
 import { Patient } from 'src/patient/entities';
 import { AuthModule } from 'src/auth/auth.module';
+import { ReportsModule } from 'src/reports/reports.module';
 
 @Module({
   controllers: [AnalysisController],
@@ -14,6 +15,7 @@ import { AuthModule } from 'src/auth/auth.module';
     TypeOrmModule.forFeature([Analysis, Image, ImageAnalysis, Patient]),
     PatientModule,
     AuthModule,
+    ReportsModule,
   ],
 })
 export class AnalysisModule {}
