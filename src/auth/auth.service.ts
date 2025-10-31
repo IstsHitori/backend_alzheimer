@@ -3,7 +3,7 @@ import {
   Inject,
   Injectable,
   Logger,
-  NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { LoginUserDto } from './dtos/login-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -33,7 +33,7 @@ export class AuthService {
       },
     });
     if (!findUser)
-      throw new NotFoundException(AUTH_ERROR_MESSAGES.USER_NOT_FOUND);
+      throw new UnauthorizedException(AUTH_ERROR_MESSAGES.USER_NOT_FOUND);
 
     const isValidPassword = await this.hasher.compare(
       loginUserDto.password,
@@ -44,6 +44,10 @@ export class AuthService {
 
     const token = this.getJwtToken({ id: findUser.id });
     return { token };
+  }
+
+  getUserProfile({ id, name, userName, role }: User) {
+    return { id, name, userName, role };
   }
 
   private getJwtToken(payload: JwtPayload) {

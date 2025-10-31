@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { ROLE } from '../constants/role';
 import { Analysis } from 'src/analysis/entities';
+import { Recent_Activity } from 'src/activity/entities/recent-activity.entity';
 
 @Entity('User')
 export class User {
@@ -68,6 +69,9 @@ export class User {
 
   @OneToMany(() => Analysis, analisys => analisys.user)
   analysis: Analysis[];
+
+  @OneToMany(() => Recent_Activity, activity => activity.user)
+  recent_activities: Recent_Activity[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {

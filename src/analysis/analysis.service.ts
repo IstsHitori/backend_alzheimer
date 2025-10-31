@@ -6,8 +6,8 @@ import { Analysis, Image, ImageAnalysis } from './entities';
 import { Patient } from 'src/patient/entities';
 import { ANALYSIS_SUCCESS_MESSAGES } from './constants';
 import { PATIENT_ERROR_MESSAGES } from 'src/patient/constants';
-import { ReportsService } from 'src/reports/reports.service';
-import { TYPE_REPORT } from 'src/reports/constants';
+import { ActivityService } from 'src/activity/activity.service';
+import { ACTIVITY_TYPE } from 'src/activity/constants/enum-values';
 
 @Injectable()
 export class AnalysisService {
@@ -20,7 +20,7 @@ export class AnalysisService {
     private imageAnalysisRepository: Repository<ImageAnalysis>,
     @InjectRepository(Patient)
     private patientRepository: Repository<Patient>,
-    private readonly reportService: ReportsService,
+    private readonly activityService: ActivityService,
   ) {}
 
   async create(createAnalysisDto: CreateAnalysisDto, userId: number) {
@@ -88,12 +88,19 @@ export class AnalysisService {
     // Guardar todos los análisis de imágenes
     await this.imageAnalysisRepository.save(imageAnalysisEntities);
 
-    //Generar el reporte
-    const report = {
-      name: `Análisis completado - Paciente: ${patient.fullName}`,
-      type: TYPE_REPORT.ANALYSIS_REPORT,
-    };
-    await this.reportService.create(report);
+    //Generar las actividades
+
+    for (const index of imageAnalysisEntities) {
+      const activity = {
+        name: `Análisis completado - Paciente: ${patient.fullName}`,
+        type: ACTIVITY_TYPE.ANALYSIS,
+        description: `Resultado: ${index.diagnosis}`,
+        user: {
+          id: userId,
+        },
+      };
+      await this.activityService.create(activity);
+    }
 
     // Retornar el análisis completo
     return await this.findOne(savedAnalysis.id);

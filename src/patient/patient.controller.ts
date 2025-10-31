@@ -13,6 +13,8 @@ import { CreatePatientDto } from './dto/create-patient.dto';
 import { UpdatePatientDto } from './dto/update-patient.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ROLE } from 'src/user/constants';
+import { GetUser } from 'src/auth/decorators/get-user-decorator';
+import { User } from 'src/user/entities/user.entity';
 
 @Auth(ROLE.ADMIN, ROLE.DOCTOR)
 @Controller('patient')
@@ -20,8 +22,8 @@ export class PatientController {
   constructor(private readonly patientService: PatientService) {}
 
   @Post()
-  create(@Body() createPatientDto: CreatePatientDto) {
-    return this.patientService.create(createPatientDto);
+  create(@Body() createPatientDto: CreatePatientDto, @GetUser() user: User) {
+    return this.patientService.create(createPatientDto, user.id);
   }
 
   @Get()

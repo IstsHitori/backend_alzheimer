@@ -17,18 +17,18 @@ import {
   SymptomsPresent,
 } from './entities';
 import { PATIENT_ERROR_MESSAGES, PATIENT_SUCCES_MESSAGES } from './constants';
-import { ReportsService } from 'src/reports/reports.service';
-import { TYPE_REPORT } from 'src/reports/constants';
+import { ActivityService } from 'src/activity/activity.service';
+import { ACTIVITY_TYPE } from 'src/activity/constants/enum-values';
 
 @Injectable()
 export class PatientService {
   constructor(
     @InjectRepository(Patient)
     private readonly patientRepository: Repository<Patient>,
-    private readonly reportService: ReportsService,
+    private readonly activityService: ActivityService,
   ) {}
 
-  async create(createPatientDto: CreatePatientDto) {
+  async create(createPatientDto: CreatePatientDto, userId: number) {
     const {
       conditions,
       currentMedications,
@@ -96,11 +96,15 @@ export class PatientService {
 
     // 7. Guardar todo
 
-    const report = {
-      name: `Nuevo paciente: ${patient.fullName} registrado`,
-      type: TYPE_REPORT.USER_REPORT,
+    const activity = {
+      title: `Nuevo paciente registrado`,
+      description: `${patient.fullName}`,
+      type: ACTIVITY_TYPE.CREATE_PATIENT,
+      user: {
+        id: userId,
+      },
     };
-    await this.reportService.create(report);
+    await this.activityService.create(activity);
 
     await this.patientRepository.save(patient);
 
