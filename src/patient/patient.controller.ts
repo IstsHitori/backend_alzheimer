@@ -40,8 +40,9 @@ export class PatientController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePatientDto: UpdatePatientDto,
+    @GetUser() user: User,
   ) {
-    return this.patientService.update(id, updatePatientDto);
+    return this.patientService.update(id, updatePatientDto, user.id);
   }
 
   @Delete(':id')

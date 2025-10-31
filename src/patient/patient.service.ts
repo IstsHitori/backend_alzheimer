@@ -218,7 +218,7 @@ export class PatientService {
     return this.formatPatient(patient);
   }
 
-  async update(id: number, updatePatientDto: UpdatePatientDto) {
+  async update(id: number, updatePatientDto: UpdatePatientDto, userId: number) {
     const {
       conditions,
       currentMedications,
@@ -308,6 +308,15 @@ export class PatientService {
     // 6. Guardar todos los cambios (cascade se encarga de las relaciones)
     await this.patientRepository.save(foundPatient);
 
+    const activity = {
+      name: `Paciente actualizado`,
+      type: ACTIVITY_TYPE.ANALYSIS,
+      description: `${patientData.fullName}`,
+      user: {
+        id: userId,
+      },
+    };
+    await this.activityService.create(activity);
     return PATIENT_SUCCES_MESSAGES.PATIENT_UPDATED;
   }
 
