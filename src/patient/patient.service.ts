@@ -309,7 +309,7 @@ export class PatientService {
     await this.patientRepository.save(foundPatient);
 
     const activity = {
-      name: `Paciente actualizado`,
+      title: `Paciente actualizado`,
       type: ACTIVITY_TYPE.ANALYSIS,
       description: `${patientData.fullName}`,
       user: {

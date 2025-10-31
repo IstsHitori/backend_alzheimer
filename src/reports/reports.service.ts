@@ -31,9 +31,8 @@ export class ReportsService {
   }
 
   private createActivityByReport(createReportDto: CreateReportDto, user: User) {
-    let activity = {};
-    if (createReportDto.type === TYPE_REPORT.MONTHLY_REPORT) {
-      activity = {
+    if (createReportDto.type === TYPE_REPORT.MONTHLY_REPORT)
+      return {
         title: `${createReportDto.type} generado`,
         description: `Se ha generado un nuevo reporte mensual por:${user.name}`,
         type: ACTIVITY_TYPE.MONTHLY_REPORT,
@@ -41,9 +40,8 @@ export class ReportsService {
           id: user.id,
         },
       };
-    }
-    if (createReportDto.type === TYPE_REPORT.ANALYSIS_REPORT) {
-      activity = {
+    if (createReportDto.type === TYPE_REPORT.ANALYSIS_REPORT)
+      return {
         title: `${createReportDto.type} generado`,
         description: `Se ha generado un nuevo reporte de analisis por:${user.name}`,
         type: ACTIVITY_TYPE.ANALYSIS_REPORT,
@@ -51,8 +49,7 @@ export class ReportsService {
           id: user.id,
         },
       };
-    }
-    activity = {
+    return {
       title: `${createReportDto.type} generado`,
       description: `Se ha generado un nuevo reporte de usuario por:${user.name}`,
       type: ACTIVITY_TYPE.USER_REPORT,
@@ -60,7 +57,5 @@ export class ReportsService {
         id: user.id,
       },
     };
-
-    return activity;
   }
 }

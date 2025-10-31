@@ -92,7 +92,7 @@ export class AnalysisService {
 
     for (const index of imageAnalysisEntities) {
       const activity = {
-        name: `Análisis completado - Paciente: ${patient.fullName}`,
+        title: `Análisis completado - Paciente: ${patient.fullName}`,
         type: ACTIVITY_TYPE.ANALYSIS,
         description: `Resultado: ${index.diagnosis}`,
         user: {
