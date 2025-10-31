@@ -21,6 +21,15 @@ export class ActivityService {
       take: limit,
       skip: offset,
       order: { createdAt: 'DESC' },
+      relations: ['user'],
+      select: {
+        user: {
+          id: true,
+          name: true,
+          userName: true,
+          role: true,
+        },
+      },
     });
   }
 }

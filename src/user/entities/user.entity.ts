@@ -33,7 +33,7 @@ export class User {
   @Column({
     type: 'text',
     //Cuando se haga un find, no me traera la contraseña
-    // select: false,
+    select: false,
   })
   password: string;
 
