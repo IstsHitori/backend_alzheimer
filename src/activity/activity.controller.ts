@@ -1,9 +1,8 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ActivityService } from './activity.service';
 import { Auth } from 'src/auth/decorators/auth.decorator';
-import { ROLE } from 'src/user/constants';
 
-@Auth(ROLE.ADMIN)
+@Auth()
 @Controller('activity')
 export class ActivityController {
   constructor(private readonly activityService: ActivityService) {}

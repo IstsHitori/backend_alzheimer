@@ -15,6 +15,7 @@ import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ROLE } from 'src/user/constants';
 import { GetUser } from 'src/auth/decorators/get-user-decorator';
 import { User } from 'src/user/entities/user.entity';
+import { UpdateConginitiveEvaluationDto } from './dto/update-cognitive-evaluation.dto';
 
 @Auth(ROLE.ADMIN, ROLE.DOCTOR)
 @Controller('patient')
@@ -43,6 +44,17 @@ export class PatientController {
     @GetUser() user: User,
   ) {
     return this.patientService.update(id, updatePatientDto, user.id);
+  }
+
+  @Patch('evaluation/:id')
+  updateCoginitiveEvaluation(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateCoginitiveEvaluation: UpdateConginitiveEvaluationDto,
+  ) {
+    return this.patientService.updateCognitiveEvaluation(
+      id,
+      updateCoginitiveEvaluation,
+    );
   }
 
   @Delete(':id')

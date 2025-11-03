@@ -19,12 +19,15 @@ import {
 import { PATIENT_ERROR_MESSAGES, PATIENT_SUCCES_MESSAGES } from './constants';
 import { ActivityService } from 'src/activity/activity.service';
 import { ACTIVITY_TYPE } from 'src/activity/constants/enum-values';
+import { UpdateConginitiveEvaluationDto } from './dto';
 
 @Injectable()
 export class PatientService {
   constructor(
     @InjectRepository(Patient)
     private readonly patientRepository: Repository<Patient>,
+    @InjectRepository(CognitiveEvaluation)
+    private readonly cogEvaluationRepository: Repository<CognitiveEvaluation>,
     private readonly activityService: ActivityService,
   ) {}
 
@@ -318,6 +321,30 @@ export class PatientService {
     };
     await this.activityService.create(activity);
     return PATIENT_SUCCES_MESSAGES.PATIENT_UPDATED;
+  }
+
+  async updateCognitiveEvaluation(
+    id: number,
+    updateCognitiveEvaluation: UpdateConginitiveEvaluationDto,
+  ) {
+    const patient = await this.patientRepository.findOne({
+      where: { id },
+      relations: ['cognitiveEvaluation'],
+    });
+
+    if (!patient) {
+      throw new NotFoundException(PATIENT_ERROR_MESSAGES.PATIENT_NOT_FOUND);
+    }
+
+    if (!patient.cognitiveEvaluation) {
+      throw new NotFoundException(
+        PATIENT_ERROR_MESSAGES.COG_EVALUATION_NOT_FOUND,
+      );
+    }
+
+    Object.assign(patient.cognitiveEvaluation, updateCognitiveEvaluation);
+    await this.cogEvaluationRepository.save(patient.cognitiveEvaluation);
+    return PATIENT_SUCCES_MESSAGES.EVALUTAION_COG_UPDATED;
   }
 
   async remove(id: number) {

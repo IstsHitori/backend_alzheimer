@@ -27,11 +27,18 @@ export class AuthService {
 
   async signin(loginUserDto: LoginUserDto) {
     this.logger.log('Login user');
+
     const findUser = await this.userRepository.findOne({
       where: {
         userName: loginUserDto.userName,
       },
+      select: {
+        password: true,
+      },
     });
+
+    console.log(findUser);
+
     if (!findUser)
       throw new UnauthorizedException(AUTH_ERROR_MESSAGES.USER_NOT_FOUND);
 
