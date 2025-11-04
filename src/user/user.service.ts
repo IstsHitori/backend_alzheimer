@@ -89,11 +89,13 @@ export class UserService {
   }
 
   private async validateRole(role: ROLE) {
+    if (role !== ROLE.ADMIN) return;
     const existOtherAdmin = await this.userRepository.findOne({
       where: {
         role,
       },
     });
+
     if (existOtherAdmin)
       throw new BadRequestException(USER_ERROR_MESSAGES.ADMIN_ALREADY_EXIST);
   }
