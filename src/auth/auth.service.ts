@@ -32,12 +32,7 @@ export class AuthService {
       where: {
         userName: loginUserDto.userName,
       },
-      select: {
-        password: true,
-      },
     });
-
-    console.log(findUser);
 
     if (!findUser)
       throw new UnauthorizedException(AUTH_ERROR_MESSAGES.USER_NOT_FOUND);
