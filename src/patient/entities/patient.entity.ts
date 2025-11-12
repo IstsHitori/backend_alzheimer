@@ -4,21 +4,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { EDUCATION_LEVEL, GENDER } from '../constants';
-import {
-  CognitiveEvaluation,
-  Condition,
-  CurrentMedication,
-  FamilyBackgrounds,
-  SymptomsPresent,
-} from '.';
+
 import { getAge, getBirthDays } from '../helpers';
-import { Analysis } from 'src/analysis/entities';
+import { EpsRegime } from './eps-regime.entity';
 
 @Entity('Patient')
 export class Patient {
@@ -75,26 +68,13 @@ export class Patient {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Condition, condition => condition.patient, { cascade: true })
-  conditions: Condition[];
-
-  @OneToMany(() => CurrentMedication, medication => medication.patient, {
-    cascade: true,
+  //----Relations-----
+  @OneToOne(() => EpsRegime, epsRegime => epsRegime.patient, {
+    onDelete: 'CASCADE',
   })
-  currentMedications: CurrentMedication[];
+  epsRegime: EpsRegime;
 
-  @OneToOne(() => FamilyBackgrounds, fb => fb.patient, { cascade: true })
-  familyBackground: FamilyBackgrounds;
-
-  @OneToOne(() => SymptomsPresent, sp => sp.patient, { cascade: true })
-  symptomsPresent: SymptomsPresent;
-
-  @OneToOne(() => CognitiveEvaluation, ce => ce.patient, { cascade: true })
-  cognitiveEvaluation: CognitiveEvaluation;
-
-  @OneToMany(() => Analysis, analysis => analysis.patient)
-  analysis: Analysis[];
-
+  //----Functions-----
   @BeforeInsert()
   checkAgeInsert() {
     this.age = getAge(this.birthDate);

@@ -1,4 +1,3 @@
-import { Patient } from 'src/patient/entities';
 import { User } from 'src/user/entities/user.entity';
 import {
   CreateDateColumn,
@@ -8,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ImageAnalysis } from '.';
+import { Patient } from 'src/patient/entities';
 
 @Entity('Analysis')
 export class Analysis {
