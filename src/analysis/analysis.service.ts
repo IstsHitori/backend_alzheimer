@@ -64,23 +64,7 @@ export class AnalysisService {
       }
 
       // Crear el análisis de la imagen
-      const imageAnalysis = this.imageAnalysisRepository.create({
-        analysis: savedAnalysis,
-        image,
-        diagnosis: imgAnalysisDto.diagnosis,
-        confidenceLevel: imgAnalysisDto.confidenceLevel,
-        mmseEstimated: imgAnalysisDto.mmseEstimated,
-        mocaEstimated: imgAnalysisDto.mocaEstimated,
-        estimationConfidence: imgAnalysisDto.estimationConfidence,
-        estimationNote: imgAnalysisDto.estimationNote,
-        brainVolume: imgAnalysisDto.brainVolume,
-        hippocampusVolume: imgAnalysisDto.hippocampusVolume,
-        corticalThickness: imgAnalysisDto.corticalThickness,
-        whiteMatterLesions: imgAnalysisDto.whiteMatterLesions,
-        deviationFromNormal: imgAnalysisDto.deviationFromNormal,
-        riskFactors: imgAnalysisDto.riskFactors,
-        medicalRecommendations: imgAnalysisDto.medicalRecommendations,
-      });
+      const imageAnalysis = this.imageAnalysisRepository.create({});
 
       imageAnalysisEntities.push(imageAnalysis);
     }

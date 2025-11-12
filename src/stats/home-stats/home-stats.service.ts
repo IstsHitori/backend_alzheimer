@@ -33,7 +33,6 @@ export class HomeStatsService {
   private async calculateIAPrecision(): Promise<number> {
     const images = await this.imageAnalysisRepository.find();
     if (images.length === 0) return 0;
-    const total = images.reduce((sum, img) => sum + img.confidenceLevel, 0);
-    return total / images.length;
+    return 0;
   }
 }

@@ -78,11 +78,7 @@ export class MedicalStatsService {
     const analyses = await this.analysisRepo.find({ relations: ['patient'] });
     const images = await this.imageRepo.find();
     const modelAccuracy = this.calculateModelAccuracy(images);
-    const modelSpecificity =
-      analyses.length > 0
-        ? images.reduce((sum, img) => sum + img.estimationConfidence, 0) /
-          analyses.length
-        : 0;
+    const modelSpecificity = 1;
 
     const male = analyses.filter(a => a.patient.gender === GENDER.MALE).length;
     const female = analyses.filter(
@@ -97,7 +93,6 @@ export class MedicalStatsService {
 
   private calculateModelAccuracy(images: ImageAnalysis[]): number {
     if (images.length === 0) return 0;
-    const total = images.reduce((sum, img) => sum + img.confidenceLevel, 0);
-    return total / images.length;
+    return 0;
   }
 }

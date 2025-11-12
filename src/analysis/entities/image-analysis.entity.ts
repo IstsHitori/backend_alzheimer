@@ -29,38 +29,14 @@ export class ImageAnalysis {
   diagnosis: DIAGNOSIS;
 
   @Column({ type: 'float' })
-  confidenceLevel: number;
+  nonDemented: number;
 
   @Column({ type: 'float' })
-  mmseEstimated: number;
+  veryMildDemented: number;
 
   @Column({ type: 'float' })
-  mocaEstimated: number;
+  mildDemented: number;
 
   @Column({ type: 'float' })
-  estimationConfidence: number;
-
-  @Column({ type: 'text' })
-  estimationNote: string;
-
-  @Column({ type: 'float' })
-  brainVolume: number;
-
-  @Column({ type: 'float' })
-  hippocampusVolume: number;
-
-  @Column({ type: 'float' })
-  corticalThickness: number;
-
-  @Column({ type: 'int' })
-  whiteMatterLesions: number;
-
-  @Column({ type: 'float' })
-  deviationFromNormal: number;
-
-  @Column({ type: 'text', array: true })
-  riskFactors: string[];
-
-  @Column({ type: 'text', array: true })
-  medicalRecommendations: string[];
+  moderateDemented: number;
 }
