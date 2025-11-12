@@ -9,8 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EDUCATION_LEVEL, GENDER, RISK_LEVEL } from '../constants';
-import { getAge } from '../helpers/get-age';
+import { EDUCATION_LEVEL, GENDER } from '../constants';
 import {
   CognitiveEvaluation,
   Condition,
@@ -18,6 +17,7 @@ import {
   FamilyBackgrounds,
   SymptomsPresent,
 } from '.';
+import { getAge, getBirthDays } from '../helpers';
 import { Analysis } from 'src/analysis/entities';
 
 @Entity('Patient')
@@ -43,6 +43,21 @@ export class Patient {
   age: number;
 
   @Column({
+    type: 'int',
+    nullable: true,
+  })
+  birthDays: number;
+
+  @Column({ type: 'int' })
+  weight: number;
+
+  @Column({ type: 'float' })
+  size: number;
+
+  @Column({ type: 'float' })
+  tension: number;
+
+  @Column({
     type: 'enum',
     enum: GENDER,
   })
@@ -53,14 +68,6 @@ export class Patient {
     enum: EDUCATION_LEVEL,
   })
   educationLevel: EDUCATION_LEVEL;
-
-  @Column({
-    type: 'enum',
-    enum: RISK_LEVEL,
-    default: RISK_LEVEL.LOW,
-    nullable: true,
-  })
-  riskLevel: RISK_LEVEL;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -91,10 +98,14 @@ export class Patient {
   @BeforeInsert()
   checkAgeInsert() {
     this.age = getAge(this.birthDate);
+    this.birthDays = getBirthDays(this.birthDate);
   }
 
   @BeforeUpdate()
   checkAgeUpdates() {
-    if (this.birthDate) this.age = getAge(this.birthDate);
+    if (this.birthDate) {
+      this.age = getAge(this.birthDate);
+      this.birthDays = getBirthDays(this.birthDate);
+    }
   }
 }
