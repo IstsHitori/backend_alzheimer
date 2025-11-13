@@ -22,7 +22,7 @@ export class PatientService {
   ) {}
 
   create(createPatientDto: CreatePatientDto, userId: number) {
-    return PATIENT_SUCCES_MESSAGES.PATIENT_CREATED;
+    return createPatientDto;
   }
 
   async findAll() {

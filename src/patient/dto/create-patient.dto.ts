@@ -1,7 +1,6 @@
 import {
   IsArray,
   IsDate,
-  IsDecimal,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -34,12 +33,12 @@ export class CreatePatientDto {
   @Min(0, { message: PATIENT_ERROR_MESSAGES.WEIGHT_MIN })
   weight: number;
 
-  @IsDecimal({}, { message: PATIENT_ERROR_MESSAGES.SIZE_DECIMAL })
+  @IsNumber({}, { message: PATIENT_ERROR_MESSAGES.SIZE_DECIMAL })
   @IsNotEmpty({ message: PATIENT_ERROR_MESSAGES.SIZE_REQUIRED })
   @Min(0, { message: PATIENT_ERROR_MESSAGES.SIZE_MIN })
   size: number;
 
-  @IsDecimal({}, { message: PATIENT_ERROR_MESSAGES.TENSION_DECIMAL })
+  @IsNumber({}, { message: PATIENT_ERROR_MESSAGES.TENSION_DECIMAL })
   @IsNotEmpty({ message: PATIENT_ERROR_MESSAGES.TENSION_REQUIRED })
   @Min(0, { message: PATIENT_ERROR_MESSAGES.TENSION_MIN })
   tension: number;
