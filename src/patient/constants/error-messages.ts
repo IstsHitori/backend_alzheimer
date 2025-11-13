@@ -13,13 +13,17 @@ export enum PATIENT_ERROR_MESSAGES {
 
   INVALID_RISK_LEVEL = 'El nivel de riesgo no es válido.',
 
-  CONDITION_STRING = 'Cada historial debe ser un caracter',
-  CONDITION_REQUIRED = 'El nombre del historial medico es requerido',
-  CONDITIONS_ARRAY = 'El historial medico debe ser una lista',
+  CONDITION_STRING = 'Cada condición médica del paciente debe ser un codigo de 4 dígitos alfanumerico',
+  CONDITION_REQUIRED = 'El nombre de la condición médica medico es requerido',
+  CONDITIONS_ARRAY = 'El historial de condiciones medicas debe ser una lista',
 
-  FAMILY_BACKGROUND_OBJECT = 'El antecedente familiar no es válido',
-  FAMILY_MEMBER_REQUIRED = 'El miembro de la familia es requerido',
-  FAMILY_MEMBER_NUMBER = 'El miembro de la familia no es válido',
+  CURRENT_MEDICATION_STRING = 'El expediente del medicamento debe ser un string  ',
+  CURRENT_MEDICATION_REQUIRED = 'El expediente del medicamento es obligatorio ',
+  CURRENT_MEDICATION_ARRAY = 'Los medicamentos del paciente debe ser una lista',
+
+  FAMILY_MEDICATION_STRING = 'Cada condición médica familiar debe ser un codigo de 4 dígitos alfanumerico',
+  FAMILY_MEDICATION_REQUIRED = 'La condición médica familiar es boligatoria',
+  FAMILY_BACKGROUND_ARRAY = 'Las condiciones médicas de los familiares deben ser una lista',
 
   SYMPTOMS_OBJECT = 'Los síntomas no son válidos',
 

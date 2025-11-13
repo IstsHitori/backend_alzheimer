@@ -1,6 +1,13 @@
-import { Column, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Patient } from './patient.entity';
 
+@Entity('Symptoms_present')
 export class SymptomsPresent {
   @PrimaryGeneratedColumn()
   id: number;

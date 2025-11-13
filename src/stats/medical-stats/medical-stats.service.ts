@@ -60,13 +60,11 @@ export class MedicalStatsService {
   }
 
   private getDistribution(patients: Patient[]): IDistributionDiagnostic {
-    const count = (level: RISK_LEVEL) =>
-      patients.filter(p => p.riskLevel === level).length;
     return {
-      healthy: count(RISK_LEVEL.HEALTHY),
-      lowAlzheimer: count(RISK_LEVEL.LOW),
-      moderateAlzheimer: count(RISK_LEVEL.MEDIUM),
-      severeAlzheimer: count(RISK_LEVEL.HIGH),
+      healthy: 0,
+      lowAlzheimer: 0,
+      moderateAlzheimer: 0,
+      severeAlzheimer: 0,
     };
   }
 

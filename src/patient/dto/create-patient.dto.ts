@@ -13,7 +13,11 @@ import {
 import { EDUCATION_LEVEL, GENDER, PATIENT_ERROR_MESSAGES } from '../constants';
 import { Type } from 'class-transformer';
 import { CreateConditionDto } from './create-condition.dto';
-import { CreateFamilyBackgroundDto, CreateSymptomsPresentDto } from '.';
+import {
+  CreateCurrentMedicationDto,
+  CreateFamilyBackgroundDto,
+  CreateSymptomsPresentDto,
+} from '.';
 
 export class CreatePatientDto {
   // Información básica
@@ -61,14 +65,20 @@ export class CreatePatientDto {
   @Type(() => CreateConditionDto)
   conditions: CreateConditionDto[];
 
+  //Medicamentos actuales
+  @IsArray({ message: PATIENT_ERROR_MESSAGES.CURRENT_MEDICATION_ARRAY })
+  @ValidateNested({ each: true })
+  @Type(() => CreateCurrentMedicationDto)
+  currentMedications: CreateCurrentMedicationDto[];
+
   // Antecedentes familiares
-  //Propósito: Valida que el valor sea un objeto (no un array, no un primitivo).
-  @IsObject({ message: PATIENT_ERROR_MESSAGES.FAMILY_BACKGROUND_OBJECT })
-  @ValidateNested()
+  @IsArray({ message: PATIENT_ERROR_MESSAGES.FAMILY_BACKGROUND_ARRAY })
+  @ValidateNested({ each: true })
   @Type(() => CreateFamilyBackgroundDto)
-  familyBackground: CreateFamilyBackgroundDto;
+  familyBackground: CreateFamilyBackgroundDto[];
 
   // Síntomas actuales
+  //Propósito: Valida que el valor sea un objeto (no un array, no un primitivo).
   @IsObject({ message: PATIENT_ERROR_MESSAGES.SYMPTOMS_OBJECT })
   @ValidateNested()
   @Type(() => CreateSymptomsPresentDto)

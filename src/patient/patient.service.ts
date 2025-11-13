@@ -6,19 +6,9 @@ import { CreatePatientDto } from './dto/create-patient.dto';
 import { UpdatePatientDto } from './dto/update-patient.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  CognitiveEvaluation,
-  Condition,
-  CurrentMedication,
-  FamilyBackgrounds,
-  FamilyMember,
-  FamilyMemberBackgrounds,
-  Patient,
-  SymptomsPresent,
-} from './entities';
+import { CognitiveEvaluation, Patient } from './entities';
 import { PATIENT_ERROR_MESSAGES, PATIENT_SUCCES_MESSAGES } from './constants';
 import { ActivityService } from 'src/activity/activity.service';
-import { ACTIVITY_TYPE } from 'src/activity/constants/enum-values';
 import { UpdateConginitiveEvaluationDto } from './dto';
 
 @Injectable()
@@ -31,86 +21,7 @@ export class PatientService {
     private readonly activityService: ActivityService,
   ) {}
 
-  async create(createPatientDto: CreatePatientDto, userId: number) {
-    const {
-      conditions,
-      currentMedications,
-      familyBackground,
-      symptomsPresent,
-      ...patientData
-    } = createPatientDto;
-
-    // 1. Crear paciente base
-    const patient = this.patientRepository.create(patientData);
-
-    // 2. Crear condiciones
-    if (conditions?.length) {
-      patient.conditions = conditions.map(c =>
-        this.patientRepository.manager.create(Condition, c),
-      );
-    }
-
-    // 3. Crear medicamentos
-    if (currentMedications?.length) {
-      patient.currentMedications = currentMedications.map(m =>
-        this.patientRepository.manager.create(CurrentMedication, m),
-      );
-    }
-
-    // 4. Crear síntomas
-    if (symptomsPresent) {
-      patient.symptomsPresent = this.patientRepository.manager.create(
-        SymptomsPresent,
-        symptomsPresent,
-      );
-    }
-
-    // 5. Crear antecedentes familiares
-    if (familyBackground) {
-      const familyBackgroundEntity = this.patientRepository.manager.create(
-        FamilyBackgrounds,
-        {
-          hasAlzheimerFamily: familyBackground.hasAlzheimerFamily,
-          hasDementialFamily: familyBackground.hasDementialFamily,
-        },
-      );
-
-      // Crear los vínculos con miembros
-      if (familyBackground.familyMemberBackgrounds?.length) {
-        familyBackgroundEntity.familyMemberBackgrounds =
-          familyBackground.familyMemberBackgrounds.map(fmb =>
-            this.patientRepository.manager.create(FamilyMemberBackgrounds, {
-              familyMember: { id: fmb.familyMemberId } as FamilyMember,
-            }),
-          );
-      }
-
-      patient.familyBackground = familyBackgroundEntity;
-    }
-
-    // 6. Crear evaluación cognitiva
-    patient.cognitiveEvaluation = this.patientRepository.manager.create(
-      CognitiveEvaluation,
-      {
-        mmse: 0,
-        moca: 0,
-      },
-    );
-
-    // 7. Guardar todo
-
-    const activity = {
-      title: `Nuevo paciente registrado`,
-      description: `${patient.fullName}`,
-      type: ACTIVITY_TYPE.CREATE_PATIENT,
-      user: {
-        id: userId,
-      },
-    };
-    await this.activityService.create(activity);
-
-    await this.patientRepository.save(patient);
-
+  create(createPatientDto: CreatePatientDto, userId: number) {
     return PATIENT_SUCCES_MESSAGES.PATIENT_CREATED;
   }
 
@@ -198,128 +109,11 @@ export class PatientService {
     }));
   }
 
-  async findOne(id: number) {
-    const patient = await this.patientRepository.findOne({
-      where: { id },
-      relations: {
-        conditions: true,
-        currentMedications: true,
-        familyBackground: {
-          familyMemberBackgrounds: {
-            familyMember: true,
-          },
-        },
-        symptomsPresent: true,
-        cognitiveEvaluation: true,
-      },
-    });
-
-    if (!patient) {
-      throw new NotFoundException(PATIENT_ERROR_MESSAGES.PATIENT_NOT_FOUND);
-    }
-
-    return this.formatPatient(patient);
+  findOne(id: number) {
+    return '';
   }
 
-  async update(id: number, updatePatientDto: UpdatePatientDto, userId: number) {
-    const {
-      conditions,
-      currentMedications,
-      familyBackground,
-      symptomsPresent,
-      ...patientData
-    } = updatePatientDto;
-
-    // Cargar el paciente con todas sus relaciones
-    const foundPatient = await this.findOneWithRelations(id);
-
-    // 1. Actualizar datos básicos del paciente
-    Object.assign(foundPatient, patientData);
-
-    // 2. Actualizar condiciones (reemplazar completamente)
-    if (conditions !== undefined) {
-      foundPatient.conditions = conditions.map(c =>
-        this.patientRepository.manager.create(Condition, c),
-      );
-    }
-
-    // 3. Actualizar medicamentos (reemplazar completamente)
-    if (currentMedications !== undefined) {
-      foundPatient.currentMedications = currentMedications.map(m =>
-        this.patientRepository.manager.create(CurrentMedication, m),
-      );
-    }
-
-    // 4. Actualizar síntomas
-    if (symptomsPresent !== undefined) {
-      if (foundPatient.symptomsPresent) {
-        // Si ya existe, actualizar sus propiedades
-        Object.assign(foundPatient.symptomsPresent, symptomsPresent);
-      } else {
-        // Si no existe, crear nuevo
-        foundPatient.symptomsPresent = this.patientRepository.manager.create(
-          SymptomsPresent,
-          symptomsPresent,
-        );
-      }
-    }
-
-    // 5. Actualizar antecedentes familiares
-    if (familyBackground !== undefined) {
-      if (foundPatient.familyBackground) {
-        // Si ya existe el family background, actualizar
-        foundPatient.familyBackground.hasAlzheimerFamily =
-          familyBackground.hasAlzheimerFamily ??
-          foundPatient.familyBackground.hasAlzheimerFamily;
-        foundPatient.familyBackground.hasDementialFamily =
-          familyBackground.hasDementialFamily ??
-          foundPatient.familyBackground.hasDementialFamily;
-
-        // Actualizar family member backgrounds si se proporcionan
-        if (familyBackground.familyMemberBackgrounds !== undefined) {
-          foundPatient.familyBackground.familyMemberBackgrounds =
-            familyBackground.familyMemberBackgrounds.map(fmb =>
-              this.patientRepository.manager.create(FamilyMemberBackgrounds, {
-                familyMember: { id: fmb.familyMemberId } as FamilyMember,
-              }),
-            );
-        }
-      } else {
-        // Si no existe family background, crear uno nuevo
-        const familyBackgroundEntity = this.patientRepository.manager.create(
-          FamilyBackgrounds,
-          {
-            hasAlzheimerFamily: familyBackground.hasAlzheimerFamily,
-            hasDementialFamily: familyBackground.hasDementialFamily,
-          },
-        );
-
-        // Agregar family member backgrounds si existen
-        if (familyBackground.familyMemberBackgrounds?.length) {
-          familyBackgroundEntity.familyMemberBackgrounds =
-            familyBackground.familyMemberBackgrounds.map(fmb =>
-              this.patientRepository.manager.create(FamilyMemberBackgrounds, {
-                familyMember: { id: fmb.familyMemberId } as FamilyMember,
-              }),
-            );
-        }
-
-        foundPatient.familyBackground = familyBackgroundEntity;
-      }
-    }
-
-    // 6. Guardar todos los cambios (cascade se encarga de las relaciones)
-    await this.patientRepository.save(foundPatient);
-
-    const activity = {
-      title: `Paciente actualizado`,
-      type: ACTIVITY_TYPE.ANALYSIS,
-      description: `${patientData.fullName}`,
-      user: {
-        id: userId,
-      },
-    };
-    await this.activityService.create(activity);
+  update(id: number, updatePatientDto: UpdatePatientDto, userId: number) {
     return PATIENT_SUCCES_MESSAGES.PATIENT_UPDATED;
   }
 
@@ -384,56 +178,5 @@ export class PatientService {
     return foundPatient;
   }
 
-  private formatPatient(patient: Patient) {
-    return {
-      id: patient.id,
-      fullName: patient.fullName,
-      birthDate: patient.birthDate,
-      age: patient.age,
-      gender: patient.gender,
-      educationLevel: patient.educationLevel,
-      riskLevel: patient.riskLevel,
-      createdAt: patient.createdAt,
-      updatedAt: patient.updatedAt,
-      conditions:
-        patient.conditions?.map(c => ({
-          id: c.id,
-          name: c.name,
-        })) ?? [],
-      currentMedications:
-        patient.currentMedications?.map(m => ({
-          id: m.id,
-          name: m.name,
-        })) ?? [],
-      familyBackground: {
-        id: patient.familyBackground?.id,
-        hasAlzheimerFamily:
-          patient.familyBackground?.hasAlzheimerFamily ?? false,
-        hasDementialFamily:
-          patient.familyBackground?.hasDementialFamily ?? false,
-        familyMembers:
-          patient.familyBackground?.familyMemberBackgrounds?.map(fmb => ({
-            id: fmb.id,
-            name: fmb.familyMember.name,
-          })) ?? [],
-      },
-      symptomsPresent: {
-        id: patient.symptomsPresent?.id,
-        memoryLoss: patient.symptomsPresent?.memoryLoss ?? false,
-        lenguageProblems: patient.symptomsPresent?.lenguageProblems ?? false,
-        difficultyWithTasks:
-          patient.symptomsPresent?.difficultyWithTasks ?? false,
-        disorientation: patient.symptomsPresent?.disorientation ?? false,
-        personalityChanges:
-          patient.symptomsPresent?.personalityChanges ?? false,
-        temporalConfusion: patient.symptomsPresent?.temporalConfusion ?? false,
-      },
-      cognitiveEvaluation: {
-        id: patient.cognitiveEvaluation?.id,
-        mmse: patient.cognitiveEvaluation?.mmse ?? null,
-        moca: patient.cognitiveEvaluation?.moca ?? null,
-        updatedAt: patient.cognitiveEvaluation?.updatedAt ?? null,
-      },
-    };
-  }
+  private formatPatient(patient: Patient) {}
 }

@@ -3,12 +3,16 @@ import {
   Entity,
   JoinColumn,
   OneToOne,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Patient } from './patient.entity';
 
 @Entity('Cognitive_evaluation')
 export class CognitiveEvaluation {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @Column({ type: 'float' })
   mmse: number;
 

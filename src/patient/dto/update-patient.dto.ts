@@ -1,19 +1,17 @@
 import {
   IsArray,
   IsDate,
+  IsDecimal,
   IsEnum,
+  IsNumber,
   IsObject,
   IsOptional,
   IsString,
+  Min,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import {
-  EDUCATION_LEVEL,
-  GENDER,
-  PATIENT_ERROR_MESSAGES,
-  RISK_LEVEL,
-} from '../constants';
+import { EDUCATION_LEVEL, GENDER, PATIENT_ERROR_MESSAGES } from '../constants';
 import {
   CreateConditionDto,
   CreateCurrentMedicationDto,
@@ -32,6 +30,21 @@ export class UpdatePatientDto {
   birthDate?: Date;
 
   @IsOptional()
+  @IsNumber({}, { message: PATIENT_ERROR_MESSAGES.WEIGHT_NUMBER })
+  @Min(0, { message: PATIENT_ERROR_MESSAGES.WEIGHT_MIN })
+  weight?: number;
+
+  @IsOptional()
+  @IsDecimal({}, { message: PATIENT_ERROR_MESSAGES.SIZE_DECIMAL })
+  @Min(0, { message: PATIENT_ERROR_MESSAGES.SIZE_MIN })
+  size?: number;
+
+  @IsOptional()
+  @IsDecimal({}, { message: PATIENT_ERROR_MESSAGES.TENSION_DECIMAL })
+  @Min(0, { message: PATIENT_ERROR_MESSAGES.TENSION_MIN })
+  tension?: number;
+
+  @IsOptional()
   @IsEnum(GENDER, { message: PATIENT_ERROR_MESSAGES.GENDER_REQUIRED })
   gender?: GENDER;
 
@@ -40,9 +53,6 @@ export class UpdatePatientDto {
     message: PATIENT_ERROR_MESSAGES.EDUCATION_LEVEL_REQUIRED,
   })
   educationLevel?: EDUCATION_LEVEL;
-
-  @IsOptional()
-  riskLevel?: RISK_LEVEL;
 
   // Historial Médico
   @IsOptional()
@@ -53,17 +63,17 @@ export class UpdatePatientDto {
 
   // Medicamentos actuales
   @IsOptional()
-  @IsArray({ message: PATIENT_ERROR_MESSAGES.MEDICATIONS_ARRAY })
+  @IsArray({ message: PATIENT_ERROR_MESSAGES.CURRENT_MEDICATION_ARRAY })
   @ValidateNested({ each: true })
   @Type(() => CreateCurrentMedicationDto)
   currentMedications?: CreateCurrentMedicationDto[];
 
   // Antecedentes familiares
   @IsOptional()
-  @IsObject({ message: PATIENT_ERROR_MESSAGES.FAMILY_BACKGROUND_OBJECT })
-  @ValidateNested()
+  @IsArray({ message: PATIENT_ERROR_MESSAGES.FAMILY_BACKGROUND_ARRAY })
+  @ValidateNested({ each: true })
   @Type(() => CreateFamilyBackgroundDto)
-  familyBackground?: CreateFamilyBackgroundDto;
+  familyBackground?: CreateFamilyBackgroundDto[];
 
   // Síntomas actuales
   @IsOptional()
