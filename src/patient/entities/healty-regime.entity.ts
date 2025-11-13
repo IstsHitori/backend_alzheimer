@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { EpsRegime } from './eps-regime.entity';
+import { EpsRegime } from '.';
 
 @Entity('Healthy_regime')
 export class HealthyRegime {

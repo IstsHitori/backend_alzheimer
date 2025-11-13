@@ -4,6 +4,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -11,7 +13,14 @@ import {
 import { EDUCATION_LEVEL, GENDER } from '../constants';
 
 import { getAge, getBirthDays } from '../helpers';
-import { EpsRegime } from './eps-regime.entity';
+import { Analysis } from 'src/analysis/entities';
+import {
+  CognitiveEvaluation,
+  EpsRegime,
+  FamilyBackgrounds,
+  PatientCondition,
+  SymptomsPresent,
+} from '.';
 
 @Entity('Patient')
 export class Patient {
@@ -69,11 +78,26 @@ export class Patient {
   updatedAt: Date;
 
   //----Relations-----
-  @OneToOne(() => EpsRegime, epsRegime => epsRegime.patient, {
-    onDelete: 'CASCADE',
+  @OneToMany(() => Analysis, analysis => analysis.patient)
+  analysis: Analysis[];
+
+  @OneToMany(() => PatientCondition, patientCon => patientCon.patient)
+  patientConditions: PatientCondition[];
+
+  @OneToMany(() => FamilyBackgrounds, familyBg => familyBg.patient)
+  familyBackgrounds: FamilyBackgrounds[];
+
+  @ManyToOne(() => EpsRegime, epsRegime => epsRegime.patient, {
+    onDelete: 'SET NULL',
+    nullable: true,
   })
   epsRegime: EpsRegime;
 
+  @OneToOne(() => CognitiveEvaluation, evaluation => evaluation.patient)
+  cognitiveEvaluation: CognitiveEvaluation;
+
+  @OneToOne(() => SymptomsPresent, symptoms => symptoms.patient)
+  symptomsPresent: SymptomsPresent;
   //----Functions-----
   @BeforeInsert()
   checkAgeInsert() {

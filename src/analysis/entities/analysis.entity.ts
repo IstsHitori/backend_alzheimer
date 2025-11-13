@@ -14,7 +14,10 @@ export class Analysis {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @ManyToOne(() => User, user => user.analysis)
+  @ManyToOne(() => User, user => user.analysis, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   user: User;
 
   @ManyToOne(() => Patient, patient => patient.analysis, {
@@ -22,9 +25,7 @@ export class Analysis {
   })
   patient: Patient;
 
-  @OneToMany(() => ImageAnalysis, imageAnalysis => imageAnalysis.analysis, {
-    cascade: true,
-  })
+  @OneToMany(() => ImageAnalysis, imageAnalysis => imageAnalysis.analysis)
   imageAnalysis: ImageAnalysis[];
 
   @CreateDateColumn()

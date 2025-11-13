@@ -1,7 +1,6 @@
-import { Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Eps } from './eps.entity';
-import { HealthyRegime } from './healty-regime.entity';
-import { Patient } from './patient.entity';
+import { HealthyRegime, Patient } from '.';
 
 @Entity('Eps_regime')
 export class EpsRegime {
@@ -9,16 +8,18 @@ export class EpsRegime {
   id: number;
 
   //-----Relations------
-  @ManyToOne(() => Eps, eps => eps.epsRegime, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Eps, eps => eps.epsRegime, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   eps: Eps;
 
   @ManyToOne(() => HealthyRegime, healthy => healthy.epsRegime, {
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
+    nullable: true,
   })
   healthyRegime: HealthyRegime;
 
-  @OneToOne(() => Patient, patient => patient.epsRegime, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => Patient, patient => patient.epsRegime)
   patient: Patient;
 }
