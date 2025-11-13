@@ -19,6 +19,7 @@ import {
   EpsRegime,
   FamilyBackgrounds,
   PatientCondition,
+  PatientCurrentMedications,
   SymptomsPresent,
 } from '.';
 
@@ -87,6 +88,9 @@ export class Patient {
   @OneToMany(() => FamilyBackgrounds, familyBg => familyBg.patient)
   familyBackgrounds: FamilyBackgrounds[];
 
+  @OneToMany(() => PatientCurrentMedications, patientCm => patientCm.patient)
+  patientCurrentMedications: PatientCurrentMedications[];
+
   @ManyToOne(() => EpsRegime, epsRegime => epsRegime.patient, {
     onDelete: 'SET NULL',
     nullable: true,
@@ -98,6 +102,7 @@ export class Patient {
 
   @OneToOne(() => SymptomsPresent, symptoms => symptoms.patient)
   symptomsPresent: SymptomsPresent;
+
   //----Functions-----
   @BeforeInsert()
   checkAgeInsert() {
