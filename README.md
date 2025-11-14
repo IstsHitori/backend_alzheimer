@@ -56,10 +56,7 @@ Backend de un sistema médico para la **detección temprana y gestión del Alzhe
 - Clasificación de nivel de riesgo
 
 ### 🖼️ Análisis de Imágenes
-- Diagnósticos: Normal, MCI, Alzheimer (Leve/Moderado/Severo)
-- Métricas cerebrales (volumen, hipocampo, grosor cortical, etc.)
-- Estimaciones MMSE y MoCA
-- Factores de riesgo y recomendaciones
+- Diagnósticos:  NonDemented,VeryMildDemented,MildDemented,ModerateDemented
 - Almacenamiento en Cloudinary
 
 ### 📊 Reportes y Estadísticas
@@ -72,9 +69,8 @@ Backend de un sistema médico para la **detección temprana y gestión del Alzhe
 - Historial completo de análisis
 - Sesiones de análisis agrupadas por fecha
 
-### 📊 **4. Sistema de Reportes Médicos**
+### 📊 **4. Sistema de Reportes Médicos (en el frontend)**
 - Generación automática de reportes clínicos
-- Diferentes tipos según necesidades (análisis, seguimiento, alta)
 - Historial completo por paciente
 - Exportación de datos para análisis externos
 
@@ -92,11 +88,6 @@ Dos niveles de información estadística:
 - Niveles de riesgo por género y edad
 - Evolución de pacientes en el tiempo
 - Métricas de efectividad de tratamientos
-
-### 🎯 **6. Gestión de Actividades Terapéuticas**
-- Registro de actividades recomendadas
-- Seguimiento de adherencia del paciente
-- Calendario de terapias y consultas
 
 ---
 
