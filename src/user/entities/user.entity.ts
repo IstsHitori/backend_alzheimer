@@ -14,8 +14,8 @@ import { Recent_Activity } from 'src/activity/entities/recent-activity.entity';
 
 @Entity('User')
 export class User {
-  @PrimaryGeneratedColumn('increment')
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({
     type: 'varchar',

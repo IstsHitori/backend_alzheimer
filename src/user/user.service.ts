@@ -44,14 +44,14 @@ export class UserService {
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const foundUser = await this.userRepository.findOneBy({ id });
     if (!foundUser)
       throw new BadRequestException(USER_ERROR_MESSAGES.USER_NOT_FOUND);
     return foundUser;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     await this.findConflictUser(
       id,
       updateUserDto.userName,
@@ -66,7 +66,7 @@ export class UserService {
     return USER_SUCCES_MESSAGES.USER_UPDATED;
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const foundUser = await this.findOne(id);
     await this.userRepository.remove(foundUser);
     return USER_SUCCES_MESSAGES.USER_DELETED;
@@ -101,7 +101,7 @@ export class UserService {
   }
 
   private async findConflictUser(
-    id: number,
+    id: string,
     userName?: string,
     email?: string,
   ) {

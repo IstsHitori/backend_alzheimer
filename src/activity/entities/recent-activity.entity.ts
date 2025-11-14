@@ -32,7 +32,8 @@ export class Recent_Activity {
   type: ACTIVITY_TYPE;
 
   @ManyToOne(() => User, user => user.analysis, {
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
+    nullable: true,
   })
   user: User;
 

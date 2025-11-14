@@ -25,8 +25,8 @@ import {
 
 @Entity('Patient')
 export class Patient {
-  @PrimaryGeneratedColumn('increment')
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({
     type: 'varchar',

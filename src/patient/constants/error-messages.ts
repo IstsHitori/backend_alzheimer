@@ -14,6 +14,7 @@ export enum PATIENT_ERROR_MESSAGES {
   INVALID_RISK_LEVEL = 'El nivel de riesgo no es válido.',
 
   CONDITION_STRING = 'Cada condición médica del paciente debe ser un codigo de 4 dígitos alfanumerico',
+  CONDITION_MAX_LENGTH = 'Cada condición debe tener máximo 4 digitos alfanumericos',
   CONDITION_REQUIRED = 'El nombre de la condición médica medico es requerido',
   CONDITIONS_ARRAY = 'El historial de condiciones medicas debe ser una lista',
 

@@ -35,7 +35,7 @@ export class AnalysisController {
   }
 
   @Get('patient/:id')
-  findOneByPatientId(@Param('id', ParseIntPipe) patientId: number) {
+  findOneByPatientId(@Param('id', ParseIntPipe) patientId: string) {
     return this.analysisService.findByPatient(patientId);
   }
 

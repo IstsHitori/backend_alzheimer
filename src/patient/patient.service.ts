@@ -21,8 +21,10 @@ export class PatientService {
     private readonly activityService: ActivityService,
   ) {}
 
-  create(createPatientDto: CreatePatientDto, userId: number) {
-    return createPatientDto;
+  create(createPatientDto: CreatePatientDto, userId: string) {
+    console.log(createPatientDto);
+    const newPatient = this.patientRepository.create();
+    return newPatient;
   }
 
   async findAll() {
@@ -109,16 +111,16 @@ export class PatientService {
     }));
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return '';
   }
 
-  update(id: number, updatePatientDto: UpdatePatientDto, userId: number) {
+  update(id: string, updatePatientDto: UpdatePatientDto, userId: string) {
     return PATIENT_SUCCES_MESSAGES.PATIENT_UPDATED;
   }
 
   async updateCognitiveEvaluation(
-    id: number,
+    id: string,
     updateCognitiveEvaluation: UpdateConginitiveEvaluationDto,
   ) {
     const patient = await this.patientRepository.findOne({
@@ -141,13 +143,13 @@ export class PatientService {
     return PATIENT_SUCCES_MESSAGES.EVALUTAION_COG_UPDATED;
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const foundPatient = await this.findOneWithoutFormat(id);
     await this.patientRepository.remove(foundPatient);
     return PATIENT_SUCCES_MESSAGES.PATIENT_DELETED;
   }
 
-  private async findOneWithoutFormat(id: number) {
+  private async findOneWithoutFormat(id: string) {
     const foundPatient = await this.patientRepository.findOne({
       where: {
         id,
@@ -158,7 +160,7 @@ export class PatientService {
     return foundPatient;
   }
 
-  private async findOneWithRelations(id: number) {
+  private async findOneWithRelations(id: string) {
     const foundPatient = await this.patientRepository.findOne({
       where: { id },
       relations: [

@@ -6,7 +6,7 @@ import {
   Patch,
   Param,
   Delete,
-  ParseIntPipe,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { PatientService } from './patient.service';
 import { CreatePatientDto } from './dto/create-patient.dto';
@@ -33,13 +33,13 @@ export class PatientController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.patientService.findOne(id);
   }
 
   @Patch(':id')
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePatientDto: UpdatePatientDto,
     @GetUser() user: User,
   ) {
@@ -48,7 +48,7 @@ export class PatientController {
 
   @Patch('evaluation/:id')
   updateCoginitiveEvaluation(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateCoginitiveEvaluation: UpdateConginitiveEvaluationDto,
   ) {
     return this.patientService.updateCognitiveEvaluation(
@@ -58,7 +58,7 @@ export class PatientController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.patientService.remove(id);
   }
 }

@@ -23,7 +23,7 @@ export class AnalysisService {
     private readonly activityService: ActivityService,
   ) {}
 
-  async create(createAnalysisDto: CreateAnalysisDto, userId: number) {
+  async create(createAnalysisDto: CreateAnalysisDto, userId: string) {
     const { patientId, imageAnalysis } = createAnalysisDto;
 
     // Verificar que el paciente existe
@@ -97,7 +97,7 @@ export class AnalysisService {
     });
   }
 
-  async findByPatient(patientId: number) {
+  async findByPatient(patientId: string) {
     const patient = await this.patientRepository.findOne({
       where: { id: patientId },
     });
