@@ -9,6 +9,7 @@ export class Condition {
   @Column({
     type: 'char',
     length: 4,
+    unique: true,
   })
   code: string;
 

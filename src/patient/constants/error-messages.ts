@@ -23,10 +23,10 @@ export enum PATIENT_ERROR_MESSAGES {
   CURRENT_MEDICATION_ARRAY = 'Los medicamentos del paciente debe ser una lista',
   CURRENT_MEDICATION_MAX_LENGTH = 'El expediente del medicamento debe ser de un tamaño máximo de 10',
 
-  FAMILY_MEDICATION_STRING = 'Cada condición médica familiar debe ser un codigo de 4 dígitos alfanumerico',
-  FAMILY_MEDICATION_REQUIRED = 'La condición médica familiar es boligatoria',
+  FAMILY_CONDITION_STRING = 'Cada condición médica familiar debe ser un codigo de 4 dígitos alfanumerico',
+  FAMILY_CONDITION_REQUIRED = 'La condición médica familiar es boligatoria',
   FAMILY_BACKGROUND_ARRAY = 'Las condiciones médicas de los familiares deben ser una lista',
-  FAMILY_MEDICATION_MAX_LENGTH = 'El expediente del medicamento del familiar debe ser de un tamaño máximo de 10',
+  FAMILY_CONDITION_MAX_LENGTH = 'El expediente del medicamento del familiar debe ser de un tamaño máximo de 10',
 
   SYMPTOMS_OBJECT = 'Los síntomas no son válidos',
 
@@ -59,4 +59,6 @@ export enum PATIENT_ERROR_MESSAGES {
   TENSION_REQUIRED = 'La tensión es obligatoria.',
   TENSION_DECIMAL = 'La tensión debe ser un número decimal.',
   TENSION_MIN = 'La tensión debe ser al menos 0.',
+
+  //HTTP errors
 }

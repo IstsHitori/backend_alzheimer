@@ -1,12 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePatientDto } from './dto/create-patient.dto';
 import { UpdatePatientDto } from './dto/update-patient.dto';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CognitiveEvaluation, Patient } from './entities';
+import { DataSource, QueryRunner, Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import {
+  CognitiveEvaluation,
+  Condition,
+  CurrentMedications,
+  FamilyBackgrounds,
+  Patient,
+  PatientCondition,
+  PatientCurrentMedications,
+  SymptomsPresent,
+} from './entities';
 import { PATIENT_ERROR_MESSAGES, PATIENT_SUCCES_MESSAGES } from './constants';
 import { ActivityService } from 'src/activity/activity.service';
 import { UpdateConginitiveEvaluationDto } from './dto';
@@ -18,13 +24,85 @@ export class PatientService {
     private readonly patientRepository: Repository<Patient>,
     @InjectRepository(CognitiveEvaluation)
     private readonly cogEvaluationRepository: Repository<CognitiveEvaluation>,
+    @InjectRepository(PatientCondition)
+    private readonly patientCondRepository: Repository<PatientCondition>,
+    @InjectRepository(Condition)
+    private readonly conditionRepository: Repository<Condition>,
     private readonly activityService: ActivityService,
+
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
   ) {}
 
-  create(createPatientDto: CreatePatientDto, userId: string) {
-    console.log(createPatientDto);
-    const newPatient = this.patientRepository.create();
-    return newPatient;
+  async create(
+    {
+      conditions,
+      currentMedications,
+      familyBackground,
+      symptomsPresent,
+      ...patientData
+    }: CreatePatientDto,
+    userId: string,
+  ) {
+    const queryRunner = await this.createTransactionConnection();
+    try {
+      //1-Crear paciente
+      const patient = queryRunner.manager.create(Patient, patientData);
+
+      const savedPatient = await queryRunner.manager.save(Patient, patient);
+
+      //2-Crear las condiciones
+      const patientConditionsEntities = await this.createPatientConditions(
+        conditions,
+        savedPatient.id,
+        queryRunner,
+      );
+      await queryRunner.manager.save(
+        PatientCondition,
+        patientConditionsEntities,
+      );
+
+      //3-Crear los medicamentos actuales
+      const patientCurrentMedicationsEntities =
+        await this.createPatientCurrentMedications(
+          currentMedications,
+          savedPatient.id,
+          queryRunner,
+        );
+      await queryRunner.manager.save(
+        PatientCurrentMedications,
+        patientCurrentMedicationsEntities,
+      );
+
+      //4-Crear condiciones de antecedentes familiares
+      const patientFamilyBackgroundsEntities =
+        await this.createPatientFamilyBackgrounds(
+          familyBackground,
+          savedPatient.id,
+          queryRunner,
+        );
+      await queryRunner.manager.save(
+        FamilyBackgrounds,
+        patientFamilyBackgroundsEntities,
+      );
+
+      //5-crear y guardar symptomsPresent
+      await this.createAndSavePatientSymptomsPresent(
+        symptomsPresent,
+        savedPatient.id,
+        queryRunner,
+      );
+    } catch (error) {
+      //Si tenemos algún error. hacemos rollback de la transacción
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      //Necesitamos liberar el query runner creado manualmente
+      await queryRunner.release();
+    }
+
+    //Guardar datos
+    return '';
   }
 
   async findAll() {
@@ -111,11 +189,15 @@ export class PatientService {
     }));
   }
 
-  findOne(id: string) {
+  findOne(id: Patient['id']) {
     return '';
   }
 
-  update(id: string, updatePatientDto: UpdatePatientDto, userId: string) {
+  update(
+    id: Patient['id'],
+    updatePatientDto: UpdatePatientDto,
+    userId: string,
+  ) {
     return PATIENT_SUCCES_MESSAGES.PATIENT_UPDATED;
   }
 
@@ -143,12 +225,13 @@ export class PatientService {
     return PATIENT_SUCCES_MESSAGES.EVALUTAION_COG_UPDATED;
   }
 
-  async remove(id: string) {
+  async remove(id: Patient['id']) {
     const foundPatient = await this.findOneWithoutFormat(id);
     await this.patientRepository.remove(foundPatient);
     return PATIENT_SUCCES_MESSAGES.PATIENT_DELETED;
   }
 
+  //---Auxiliar functions
   private async findOneWithoutFormat(id: string) {
     const foundPatient = await this.patientRepository.findOne({
       where: {
@@ -180,5 +263,104 @@ export class PatientService {
     return foundPatient;
   }
 
-  private formatPatient(patient: Patient) {}
+  private async createPatientConditions(
+    conditions: CreatePatientDto['conditions'],
+    patientId: Patient['id'],
+    queryRunner: QueryRunner,
+  ) {
+    const patientConditionsEntities = await Promise.all(
+      conditions.map(async condition => {
+        const foundCondition = await queryRunner.manager.findOne(Condition, {
+          where: { code: condition.code },
+        });
+        if (!foundCondition)
+          throw new NotFoundException(
+            `Condición médica con código:${condition.code} no encontada`,
+          );
+
+        return queryRunner.manager.create(PatientCondition, {
+          patient: { id: patientId },
+          condition: { id: foundCondition.id },
+        });
+      }),
+    );
+
+    return patientConditionsEntities;
+  }
+
+  private async createPatientCurrentMedications(
+    currentMedications: CreatePatientDto['currentMedications'],
+    patientId: Patient['id'],
+    queryRunner: QueryRunner,
+  ) {
+    const currentMedicationsEntities = await Promise.all(
+      currentMedications.map(async medication => {
+        const foundMedication = await queryRunner.manager.findOne(
+          CurrentMedications,
+          { where: { expedient: medication.expedient } },
+        );
+        if (!foundMedication)
+          throw new NotFoundException(
+            `Medicamento con expediente:${medication.expedient} no encontrado`,
+          );
+
+        return queryRunner.manager.create(PatientCurrentMedications, {
+          patient: { id: patientId },
+          currentMedication: { id: foundMedication.id },
+        });
+      }),
+    );
+    return currentMedicationsEntities;
+  }
+
+  private async createPatientFamilyBackgrounds(
+    familyBackground: CreatePatientDto['familyBackground'],
+    patientId: Patient['id'],
+    queryRunner: QueryRunner,
+  ) {
+    const patientFamilyBackgroundsEntities = Promise.all(
+      familyBackground.map(async condition => {
+        const foundCondition = await queryRunner.manager.findOne(Condition, {
+          where: { code: condition.code },
+        });
+        if (!foundCondition)
+          throw new NotFoundException(
+            `Condición médica con código:${condition.code} no encontada`,
+          );
+
+        return queryRunner.manager.create(FamilyBackgrounds, {
+          patient: { id: patientId },
+          condition: { id: foundCondition.id },
+        });
+      }),
+    );
+
+    return patientFamilyBackgroundsEntities;
+  }
+
+  private async createAndSavePatientSymptomsPresent(
+    symptomsPresent: CreatePatientDto['symptomsPresent'],
+    patientId: Patient['id'],
+    queryRunner: QueryRunner,
+  ) {
+    const patientSymptomsPresentEntity = queryRunner.manager.create(
+      SymptomsPresent,
+      { ...symptomsPresent, patient: { id: patientId } },
+    );
+    await queryRunner.manager.save(
+      SymptomsPresent,
+      patientSymptomsPresentEntity,
+    );
+  }
+
+  private async createTransactionConnection() {
+    //Crear el queryRunner para la transacción
+    const queryRunner = this.dataSource.createQueryRunner();
+    //Establecemos una conexión a la BD con el queryRunner
+    await queryRunner.connect();
+    //Abrimos una transacción
+    await queryRunner.startTransaction();
+
+    return queryRunner;
+  }
 }
