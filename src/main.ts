@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { bootstrapAdmin } from './seed/bootstrap';
+import { bootstrapAdmin } from './seed/bootstrap-admin';
 import { ConfigService } from '@nestjs/config';
 import { HashAdapter } from './common/interfaces/hash.interface';
 
