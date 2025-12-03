@@ -11,6 +11,7 @@ import { ReportsModule } from './reports/reports.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { StatsModule } from './stats/stats.module';
 import { ActivityModule } from './activity/activity.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { ActivityModule } from './activity/activity.module';
     CloudinaryModule,
     StatsModule,
     ActivityModule,
+    SeedModule,
   ],
   controllers: [],
   providers: [],

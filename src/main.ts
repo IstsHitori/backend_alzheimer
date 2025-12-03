@@ -1,20 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import { bootstrapAdmin } from './seed/bootstrap-admin';
 import { ConfigService } from '@nestjs/config';
-import { HashAdapter } from './common/interfaces/hash.interface';
+import { SeedService } from './seed/seed.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   //------
   //El app.get accede a una instancia específica registrada en el contenedor de dependencias de la aplicacion
-  const dataSource = app.get(DataSource);
+
   const config = app.get(ConfigService);
-  const hasher = app.get<HashAdapter>('HashAdapter');
-  await bootstrapAdmin(dataSource, config, hasher);
+  const seedService = app.get(SeedService);
+  seedService.execute();
+
   //------
   //Habilitar los cors
   app.enableCors({

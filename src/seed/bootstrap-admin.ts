@@ -22,6 +22,7 @@ export async function bootstrapAdmin(
       },
     });
     if (existingAdmin) return;
+
     const admin = userRepo.create({
       name: config.get<string>('ADMIN_NAME'),
       userName: config.get<string>('ADMIN_USERNAME'),
