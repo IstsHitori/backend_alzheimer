@@ -12,7 +12,7 @@ async function bootstrap() {
 
   const config = app.get(ConfigService);
   const seedService = app.get(SeedService);
-  seedService.execute();
+  await seedService.execute();
 
   //------
   //Habilitar los cors
