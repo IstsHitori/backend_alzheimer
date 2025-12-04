@@ -32,3 +32,9 @@ export enum FAMILY_MEMBER {
   SISTER = 'Hermana',
   BROTHER = 'Hermano',
 }
+
+export enum REGIME {
+  CONTRIBUTIVO = 'CONTRIBUTIVO',
+  SUBSIDIADO = 'SUBSIDIADO',
+  AMBOS_REGIMENES = 'AMBOS REGIMENES',
+}

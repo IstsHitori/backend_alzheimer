@@ -16,7 +16,7 @@ import { getAge, getBirthDays } from '../helpers';
 import { Analysis } from 'src/analysis/entities';
 import {
   CognitiveEvaluation,
-  EpsRegime,
+  Eps,
   FamilyBackgrounds,
   PatientCondition,
   PatientCurrentMedications,
@@ -91,11 +91,11 @@ export class Patient {
   @OneToMany(() => PatientCurrentMedications, patientCm => patientCm.patient)
   patientCurrentMedications: PatientCurrentMedications[];
 
-  @ManyToOne(() => EpsRegime, epsRegime => epsRegime.patient, {
+  @ManyToOne(() => Eps, eps => eps.patients, {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  epsRegime: EpsRegime;
+  eps: Eps;
 
   @OneToOne(() => CognitiveEvaluation, evaluation => evaluation.patient)
   cognitiveEvaluation: CognitiveEvaluation;

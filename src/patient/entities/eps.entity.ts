@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { EpsRegime } from '.';
+import { REGIME } from '../constants';
+import { Patient } from './patient.entity';
 
 @Entity('Eps')
 export class Eps {
@@ -10,7 +11,7 @@ export class Eps {
   nit: number;
 
   @Column({ type: 'boolean' })
-  isActite: boolean;
+  isActive: boolean;
 
   @Column({ type: 'varchar', length: 100 })
   entity: string;
@@ -21,7 +22,10 @@ export class Eps {
   @Column({ type: 'varchar', length: 20 })
   mobilityCode: string;
 
+  @Column({ type: 'enum', enum: REGIME })
+  regime: REGIME;
+
   //------Relations--------
-  @OneToMany(() => EpsRegime, epsRegime => epsRegime.eps)
-  epsRegime: EpsRegime[];
+  @OneToMany(() => Patient, patient => patient.eps)
+  patients: Patient[];
 }
