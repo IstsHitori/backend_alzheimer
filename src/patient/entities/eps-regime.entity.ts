@@ -16,7 +16,6 @@ export class EpsRegime {
 
   @ManyToOne(() => HealthyRegime, healthy => healthy.epsRegime, {
     onDelete: 'SET NULL',
-    nullable: true,
   })
   healthyRegime: HealthyRegime;
 

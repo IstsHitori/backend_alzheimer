@@ -6,7 +6,7 @@ export class Eps {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int', unique: true })
   nit: number;
 
   @Column({ type: 'boolean' })
