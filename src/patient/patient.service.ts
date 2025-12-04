@@ -40,47 +40,7 @@ export class PatientService {
 
   async findAll() {
     const rawResults = await this.patientQueryService.findAll();
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return rawResults;
-
-    // return rawResults.map(p => ({
-    //   id: p.id,
-    //   fullName: p.fullName,
-    //   birthDate: p.birthDate,
-    //   age: p.age,
-    //   gender: p.gender,
-    //   educationLevel: p.educationLevel,
-    //   riskLevel: p.riskLevel,
-    //   createdAt: p.createdAt,
-    //   updatedAt: p.updatedAt,
-    //   familyBackground: {
-    //     hasAlzheimerFamily: p.hasAlzheimerFamily ?? false,
-    //     hasDementialFamily: p.hasDementialFamily ?? false,
-    //     familyMembers: p.familiares
-    //       ? p.familiares.split(', ').filter(Boolean)
-    //       : [],
-    //   },
-    //   symptomsPresent: {
-    //     memoryLoss: p.memoryLoss ?? false,
-    //     lenguageProblems: p.lenguageProblems ?? false,
-    //     difficultyWithTasks: p.difficultyWithTasks ?? false,
-    //     disorientation: p.disorientation ?? false,
-    //     personalityChanges: p.personalityChanges ?? false,
-    //     temporalConfusion: p.temporalConfusion ?? false,
-    //   },
-    //   cognitiveEvaluation: {
-    //     mmse: p.mmse ?? null,
-    //     moca: p.moca ?? null,
-    //     updatedAt: p.cognitiveUpdatedAt ?? null,
-    //   },
-    //   conditions: p.condiciones
-    //     ? p.condiciones.split(', ').filter(Boolean)
-    //     : [],
-    //   medications: p.medicamentos
-    //     ? p.medicamentos.split(', ').filter(Boolean)
-    //     : [],
-    // }));
   }
 
   findOne(id: Patient['id']) {

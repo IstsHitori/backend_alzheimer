@@ -3,6 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 import { CreatePatientDto } from '../dto';
 import {
+  CognitiveEvaluation,
   FamilyBackgrounds,
   Patient,
   PatientCondition,
@@ -64,6 +65,11 @@ export class PatientPersistenceService {
       );
       await this.createAndSavePatientSymptomsPresent(
         symptomsPresent,
+        savedPatient.id,
+        manager,
+      );
+
+      await this.createAndSavePatientCognitiveEvaluation(
         savedPatient.id,
         manager,
       );
@@ -149,5 +155,18 @@ export class PatientPersistenceService {
       patient: { id: patientId },
     });
     await manager.save(SymptomsPresent, patientSymptomsPresentEntity);
+  }
+
+  private async createAndSavePatientCognitiveEvaluation(
+    patientId: Patient['id'],
+    manager: EntityManager,
+  ) {
+    const cogEvaluation = manager.create(CognitiveEvaluation, {
+      mmse: 0,
+      moca: 0,
+      patient: { id: patientId },
+    });
+
+    await manager.save(CognitiveEvaluation, cogEvaluation);
   }
 }
