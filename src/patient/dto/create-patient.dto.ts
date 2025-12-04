@@ -6,6 +6,7 @@ import {
   IsNumber,
   IsObject,
   IsString,
+  Length,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -20,6 +21,17 @@ import {
 
 export class CreatePatientDto {
   // Información básica
+
+  @IsString({ message: PATIENT_ERROR_MESSAGES.IDENTIFICATION_STRING })
+  @IsNotEmpty({ message: PATIENT_ERROR_MESSAGES.IDENTIFICATION_REQUIRED })
+  @Length(6, 10, { message: PATIENT_ERROR_MESSAGES.IDENTIFICATION_LENGTH })
+  identification: string;
+
+  @IsString({ message: PATIENT_ERROR_MESSAGES.TELEPHONE_STRING })
+  @IsNotEmpty({ message: PATIENT_ERROR_MESSAGES.TELEPHONE_REQUIRED })
+  @Length(10, 10, { message: PATIENT_ERROR_MESSAGES.TELEPHONE_LENGTH })
+  telephone: string;
+
   @IsString({ message: PATIENT_ERROR_MESSAGES.FULL_NAME_STRING })
   @IsNotEmpty({ message: PATIENT_ERROR_MESSAGES.FULL_NAME_REQUIRED })
   fullName: string;
@@ -52,6 +64,10 @@ export class CreatePatientDto {
   })
   @IsNotEmpty({ message: PATIENT_ERROR_MESSAGES.EDUCATION_LEVEL_REQUIRED })
   educationLevel: EDUCATION_LEVEL;
+
+  @IsNumber({}, { message: PATIENT_ERROR_MESSAGES.EPS_NUMBER })
+  @IsNotEmpty({ message: PATIENT_ERROR_MESSAGES.EPS_REQUIRED })
+  eps: number;
 
   // Historial Médico
   //Validar que el valor sea un arregl

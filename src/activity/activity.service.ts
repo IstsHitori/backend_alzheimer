@@ -11,7 +11,9 @@ export class ActivityService {
     private readonly activityRepository: Repository<Recent_Activity>,
   ) {}
   async create(createActivityDto: CreateActivityDto) {
-    const recent_activity = this.activityRepository.create(createActivityDto);
+    const recent_activity = this.activityRepository.create(
+      this.prepareActivityData(createActivityDto),
+    );
 
     return await this.activityRepository.save(recent_activity);
   }
@@ -31,5 +33,9 @@ export class ActivityService {
         },
       },
     });
+  }
+
+  private prepareActivityData(createActivityDto: CreateActivityDto) {
+    return { ...createActivityDto, user: { id: createActivityDto.userId } };
   }
 }

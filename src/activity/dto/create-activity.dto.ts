@@ -1,4 +1,10 @@
-import { IsEnum, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+  IsUUID,
+  MaxLength,
+} from 'class-validator';
 import { ACTIVITY_TYPE, ACTIVITY_ERROR_MESSAGES } from '../constants';
 
 export class CreateActivityDto {
@@ -17,4 +23,8 @@ export class CreateActivityDto {
   @IsNotEmpty({ message: ACTIVITY_ERROR_MESSAGES.TYPE_REQUIRED })
   @IsEnum(ACTIVITY_TYPE, { message: ACTIVITY_ERROR_MESSAGES.TYPE_INVALID })
   type: ACTIVITY_TYPE;
+
+  @IsNotEmpty({ message: ACTIVITY_ERROR_MESSAGES.USERID_REQUIRED })
+  @IsUUID('4', { message: ACTIVITY_ERROR_MESSAGES.USERID_MUST_BE_UUID })
+  userId: string;
 }

@@ -30,6 +30,19 @@ export class Patient {
 
   @Column({
     type: 'varchar',
+    length: 10,
+    unique: true,
+  })
+  identification: string;
+
+  @Column({
+    type: 'char',
+    length: 10,
+  })
+  telephone: string;
+
+  @Column({
+    type: 'varchar',
     length: 50,
   })
   fullName: string;

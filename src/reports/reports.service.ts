@@ -36,26 +36,20 @@ export class ReportsService {
         title: `${createReportDto.type} generado`,
         description: `Se ha generado un nuevo reporte mensual por:${user.name}`,
         type: ACTIVITY_TYPE.MONTHLY_REPORT,
-        user: {
-          id: user.id,
-        },
+        userId: user.id,
       };
     if (createReportDto.type === TYPE_REPORT.ANALYSIS_REPORT)
       return {
         title: `${createReportDto.type} generado`,
         description: `Se ha generado un nuevo reporte de analisis por:${user.name}`,
         type: ACTIVITY_TYPE.ANALYSIS_REPORT,
-        user: {
-          id: user.id,
-        },
+        userId: user.id,
       };
     return {
       title: `${createReportDto.type} generado`,
       description: `Se ha generado un nuevo reporte de usuario por:${user.name}`,
       type: ACTIVITY_TYPE.USER_REPORT,
-      user: {
-        id: user.id,
-      },
+      userId: user.id,
     };
   }
 }

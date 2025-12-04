@@ -16,10 +16,20 @@ import {
   PatientCurrentMedications,
   SymptomsPresent,
 } from './entities';
+import {
+  PatientPersistenceService,
+  PatientQueryService,
+  PatientValidatorService,
+} from './services';
 
 @Module({
   controllers: [PatientController],
-  providers: [PatientService],
+  providers: [
+    PatientService,
+    PatientValidatorService,
+    PatientPersistenceService,
+    PatientQueryService,
+  ],
   imports: [
     TypeOrmModule.forFeature([
       Patient,

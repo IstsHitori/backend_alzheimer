@@ -7,4 +7,6 @@ export enum ACTIVITY_ERROR_MESSAGES {
   DESCRIPTION_MAX_LENGTH = 'La descripción no puede exceder los 100 caracteres',
   TYPE_REQUIRED = 'El tipo de actividad es obligatorio',
   TYPE_INVALID = 'El tipo de actividad no es válido',
+  USERID_REQUIRED = 'El ID del usuario es obligatorio',
+  USERID_MUST_BE_UUID = 'El ID del usuario debe ser un UUID válido',
 }

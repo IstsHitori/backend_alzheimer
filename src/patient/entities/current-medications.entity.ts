@@ -9,7 +9,7 @@ export class CurrentMedications {
   @Column({ type: 'text' })
   product: string;
 
-  @Column({ type: 'varchar', length: 10 })
+  @Column({ type: 'varchar', length: 10, unique: true })
   expedient: string;
 
   @Column({ type: 'text' })

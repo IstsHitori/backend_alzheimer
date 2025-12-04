@@ -79,9 +79,7 @@ export class AnalysisService {
         title: `Análisis completado - Paciente: ${patient.fullName}`,
         type: ACTIVITY_TYPE.ANALYSIS,
         description: `Resultado: ${index.diagnosis}`,
-        user: {
-          id: userId,
-        },
+        userId,
       };
       await this.activityService.create(activity);
     }

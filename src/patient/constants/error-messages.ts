@@ -1,4 +1,13 @@
 export enum PATIENT_ERROR_MESSAGES {
+  // DTO Validation Messages
+  IDENTIFICATION_REQUIRED = 'El número de identificación es obligatoria.',
+  IDENTIFICATION_STRING = 'El número de identificación debe ser un caracter.',
+  IDENTIFICATION_LENGTH = 'El número de identificación debe ser de minimo 6 digitos y maximo 10',
+
+  TELEPHONE_REQUIRED = 'El teléfono es obligatorio.',
+  TELEPHONE_STRING = 'El teléfono debe ser un caracter.',
+  TELEPHONE_LENGTH = 'El teléfono debe ser de 10 digitos',
+
   FULL_NAME_REQUIRED = 'El nombre completo es obligatorio.',
   FULL_NAME_STRING = 'El nombre completo debe ser una cadena de texto.',
 
@@ -38,8 +47,6 @@ export enum PATIENT_ERROR_MESSAGES {
   DISORIENTATION_BOOLEAN = 'El valor de desorientación debe ser un booleano',
   PERSONALITY_CHANGES_BOOLEAN = 'El valor de cambios de personalidad debe ser un booleano',
   TEMPORAL_CONFUSION_BOOLEAN = 'El valor de confusión temporal debe ser un booleano',
-  COG_EVALUATION_NOT_FOUND = 'Evaluación cognitiva no encontrada',
-  PATIENT_NOT_FOUND = 'Paciente no encontrado',
 
   MMSE_REQUIRED = 'El puntaje MMSE es obligatorio.',
   MMSE_NUMBER = 'El puntaje MMSE debe ser un número.',
@@ -60,5 +67,12 @@ export enum PATIENT_ERROR_MESSAGES {
   TENSION_DECIMAL = 'La tensión debe ser un número decimal.',
   TENSION_MIN = 'La tensión debe ser al menos 0.',
 
-  //HTTP errors
+  EPS_REQUIRED = 'La eps es obligatoria',
+  EPS_NUMBER = 'La eps debe ser un número',
+
+  // HTTP Errors
+  COG_EVALUATION_NOT_FOUND = 'Evaluación cognitiva no encontrada',
+  PATIENT_NOT_FOUND = 'Paciente no encontrado',
+  PATIENT_IDENTIFICATION_EXIST = 'Ya existe un paciente con esta identificacion',
+  EPS_NOT_FOUND = 'Eps no encontrada',
 }
