@@ -10,7 +10,7 @@ export class Eps {
   @Column({ type: 'int', unique: true })
   nit: number;
 
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
   @Column({ type: 'varchar', length: 100 })

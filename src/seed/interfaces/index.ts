@@ -1,3 +1,5 @@
+import { REGIME } from 'src/patient/constants';
+
 export interface CIE10 {
   code: string;
   name: string;
@@ -18,4 +20,12 @@ export interface CUM {
   quantity: number;
   referenceUnit: string;
   pharmaceuticalForm: string;
+}
+
+export interface EpsData {
+  entity: string;
+  code: string;
+  mobilityCode: string;
+  nit: number;
+  regime: REGIME;
 }
