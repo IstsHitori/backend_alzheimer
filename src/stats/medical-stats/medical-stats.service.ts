@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IAnalysis, IMedicalDashboardStats, IResume } from './interfaces';
-import { MedicalQueryService } from './services/medical-query.service';
-import { MedicalCalculationService } from './services/medical-calculation.service';
+import { MedicalCalculationService, MedicalQueryService } from './services';
 
 @Injectable()
 export class MedicalStatsService {

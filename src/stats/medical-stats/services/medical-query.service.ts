@@ -9,8 +9,8 @@ import {
   IHealthyCases,
 } from '../interfaces';
 import { DIAGNOSIS } from 'src/analysis/constants';
-import { MedicalCalculationService } from './medical-calculation.service';
 import { GENDER } from 'src/patient/constants';
+import { MedicalCalculationService } from '.';
 
 @Injectable()
 export class MedicalQueryService {
