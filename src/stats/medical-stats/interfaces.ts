@@ -1,5 +1,5 @@
 export interface IResume {
-  analysisTotal: number;
+  totalAnalysis: number;
   healthyCases: IHealthyCases;
   alzheimerCases: IAlzheimerCases;
   averageAge: number;
@@ -23,7 +23,6 @@ export interface IAlzheimerCases {
 
 export interface IAnalysis {
   analysisByGender: IAnalysisByGender;
-  accuracyMetrics: IAccuracyMetrics;
 }
 export interface IAnalysisByGender {
   male: number;

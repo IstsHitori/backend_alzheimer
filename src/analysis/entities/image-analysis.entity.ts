@@ -25,7 +25,7 @@ export class ImageAnalysis {
   })
   image: Image;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'text' })
   diagnosis: DIAGNOSIS;
 
   @Column({ type: 'float' })

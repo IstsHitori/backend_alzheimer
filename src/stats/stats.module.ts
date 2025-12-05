@@ -8,10 +8,18 @@ import { Patient } from 'src/patient/entities';
 import { Report } from 'src/reports/entities/report.entity';
 import { HomeStatsService } from './home-stats/home-stats.service';
 import { MedicalStatsService } from './medical-stats/medical-stats.service';
+import { MedicalQueryService } from './medical-stats/services/medical-query.service';
+import { MedicalCalculationService } from './medical-stats/services/medical-calculation.service';
 
 @Module({
   controllers: [StatsController],
-  providers: [StatsService, HomeStatsService, MedicalStatsService],
+  providers: [
+    StatsService,
+    HomeStatsService,
+    MedicalStatsService,
+    MedicalQueryService,
+    MedicalCalculationService,
+  ],
   imports: [
     AuthModule,
     TypeOrmModule.forFeature([Analysis, Patient, ImageAnalysis, Report]),

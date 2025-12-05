@@ -11,13 +11,6 @@ export enum EDUCATION_LEVEL {
   POSTGRADUATE = 'postgrado',
 }
 
-export enum RISK_LEVEL {
-  HEALTHY = 'sano',
-  LOW = 'bajo',
-  MEDIUM = 'medio',
-  HIGH = 'alto',
-}
-
 export enum FAMILY_MEMBER {
   MOTHER = 'Madre',
   FATHER = 'Padre',
