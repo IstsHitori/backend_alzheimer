@@ -7,6 +7,7 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  Length,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -21,6 +22,17 @@ import {
 
 export class UpdatePatientDto {
   // Información básica
+
+  @IsOptional()
+  @IsString({ message: PATIENT_ERROR_MESSAGES.IDENTIFICATION_STRING })
+  @Length(6, 10, { message: PATIENT_ERROR_MESSAGES.IDENTIFICATION_LENGTH })
+  identification?: string;
+
+  @IsOptional()
+  @IsString({ message: PATIENT_ERROR_MESSAGES.TELEPHONE_STRING })
+  @Length(10, 10, { message: PATIENT_ERROR_MESSAGES.TELEPHONE_LENGTH })
+  telephone?: string;
+
   @IsOptional()
   @IsString({ message: PATIENT_ERROR_MESSAGES.FULL_NAME_STRING })
   fullName?: string;
@@ -53,6 +65,10 @@ export class UpdatePatientDto {
     message: PATIENT_ERROR_MESSAGES.EDUCATION_LEVEL_REQUIRED,
   })
   educationLevel?: EDUCATION_LEVEL;
+
+  @IsOptional()
+  @IsNumber({}, { message: PATIENT_ERROR_MESSAGES.EPS_NUMBER })
+  eps: number;
 
   // Historial Médico
   @IsOptional()

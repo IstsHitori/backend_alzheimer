@@ -60,4 +60,19 @@ export class PatientValidatorService {
 
     return foundExpedient;
   }
+
+  async validateIdentificationForUpdate(
+    identification: Patient['identification'],
+    currentPatientId: Patient['id'],
+    manager: EntityManager,
+  ) {
+    const foundPatient = await manager.findOne(Patient, {
+      where: { identification },
+    });
+    if (foundPatient && foundPatient.id !== currentPatientId) {
+      throw new BadRequestException(
+        PATIENT_ERROR_MESSAGES.PATIENT_IDENTIFICATION_EXIST,
+      );
+    }
+  }
 }

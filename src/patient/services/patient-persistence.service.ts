@@ -82,6 +82,104 @@ export class PatientPersistenceService {
     });
   }
 
+  async updatePatientTransaction(
+    patientId: Patient['id'],
+    updateData: {
+      eps?: number;
+      conditions?: CreatePatientDto['conditions'];
+      currentMedications?: CreatePatientDto['currentMedications'];
+      familyBackground?: CreatePatientDto['familyBackground'];
+      symptomsPresent?: CreatePatientDto['symptomsPresent'];
+      basicData?: Partial<Patient>;
+    },
+  ): Promise<void> {
+    await this.dataSource.transaction(async manager => {
+      const {
+        eps,
+        conditions,
+        currentMedications,
+        familyBackground,
+        symptomsPresent,
+        basicData,
+      } = updateData;
+
+      // Validar identificación si se está actualizando
+      if (basicData?.identification) {
+        await this.validator.validateIdentificationForUpdate(
+          basicData.identification,
+          patientId,
+          manager,
+        );
+      }
+
+      // Actualizar datos básicos del paciente
+      if (basicData && Object.keys(basicData).length > 0) {
+        await manager.update(Patient, { id: patientId }, basicData);
+      }
+
+      // Actualizar EPS
+      if (eps !== undefined) {
+        const foundEps = await this.validator.findEpsById(eps, manager);
+        await manager.update(
+          Patient,
+          { id: patientId },
+          { eps: { id: foundEps.id } },
+        );
+      }
+
+      // Actualizar condiciones
+      if (conditions && conditions.length > 0) {
+        await manager.delete(PatientCondition, { patient: { id: patientId } });
+        const patientConditionEntities = await this.createPatientConditions(
+          conditions,
+          patientId,
+          manager,
+        );
+        await manager.save(PatientCondition, patientConditionEntities);
+      }
+
+      // Actualizar medicamentos
+      if (currentMedications && currentMedications.length > 0) {
+        await manager.delete(PatientCurrentMedications, {
+          patient: { id: patientId },
+        });
+        const patientMedicationEntities =
+          await this.createPatientCurrentMedications(
+            currentMedications,
+            patientId,
+            manager,
+          );
+        await manager.save(
+          PatientCurrentMedications,
+          patientMedicationEntities,
+        );
+      }
+
+      // Actualizar antecedentes familiares
+      if (familyBackground && familyBackground.length > 0) {
+        await manager.delete(FamilyBackgrounds, { patient: { id: patientId } });
+        const patientFamilyBgEntities =
+          await this.createPatientFamilyBackgrounds(
+            familyBackground,
+            patientId,
+            manager,
+          );
+        await manager.save(FamilyBackgrounds, patientFamilyBgEntities);
+      }
+
+      // Actualizar síntomas presentes
+      if (symptomsPresent) {
+        const existingSymptoms = await manager.findOne(SymptomsPresent, {
+          where: { patient: { id: patientId } },
+        });
+        if (existingSymptoms) {
+          Object.assign(existingSymptoms, symptomsPresent);
+          await manager.save(SymptomsPresent, existingSymptoms);
+        }
+      }
+    });
+  }
+
   private async createPatientConditions(
     conditions: CreatePatientDto['conditions'],
     patientId: Patient['id'],

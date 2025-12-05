@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Patient } from '../entities';
 import { Repository } from 'typeorm';
+import { PATIENT_ERROR_MESSAGES } from '../constants';
 
 @Injectable()
 export class PatientQueryService {
@@ -25,8 +26,28 @@ export class PatientQueryService {
     return this.formatFindAllPatientResponse(patients);
   }
 
-  private formatFindAllPatientResponse(patients: Patient[]) {
-    return patients.map(patient => ({
+  async findOne(id: Patient['id']) {
+    const patient = await this.patientRepository.findOne({
+      where: { id },
+      relations: [
+        'eps',
+        'cognitiveEvaluation',
+        'patientConditions.condition',
+        'familyBackgrounds.condition',
+        'patientCurrentMedications.currentMedication',
+        'symptomsPresent',
+        'analysis.imageAnalysis',
+      ],
+    });
+
+    if (!patient)
+      throw new NotFoundException(PATIENT_ERROR_MESSAGES.PATIENT_NOT_FOUND);
+
+    return this.formatPatientResponse(patient);
+  }
+
+  private formatPatientResponse(patient: Patient) {
+    return {
       id: patient.id,
       personalInfo: {
         identification: patient.identification,
@@ -96,6 +117,10 @@ export class PatientQueryService {
         createdAt: patient.createdAt,
         updatedAt: patient.updatedAt,
       },
-    }));
+    };
+  }
+
+  private formatFindAllPatientResponse(patients: Patient[]) {
+    return patients.map(patient => this.formatPatientResponse(patient));
   }
 }

@@ -43,15 +43,44 @@ export class PatientService {
     return rawResults;
   }
 
-  findOne(id: Patient['id']) {
-    return '';
+  async findOne(id: Patient['id']) {
+    return await this.patientQueryService.findOne(id);
   }
 
-  update(
+  async update(
     id: Patient['id'],
     updatePatientDto: UpdatePatientDto,
     userId: string,
   ) {
+    const {
+      eps,
+      conditions,
+      currentMedications,
+      familyBackground,
+      symptomsPresent,
+      ...restPatient
+    } = updatePatientDto;
+
+    // Verificar que el paciente existe
+    const patient = await this.findOneWithoutFormat(id);
+
+    // Usar transacción para actualizar todo
+    await this.patientPersistenceService.updatePatientTransaction(id, {
+      basicData: Object.keys(restPatient).length > 0 ? restPatient : undefined,
+      eps,
+      conditions,
+      currentMedications,
+      familyBackground,
+      symptomsPresent,
+    });
+
+    await this.activityService.create({
+      title: 'Paciente actualizado',
+      description: `Paciente ${patient.fullName} actualizado con éxito`,
+      type: ACTIVITY_TYPE.CREATE_PATIENT,
+      userId,
+    });
+
     return PATIENT_SUCCES_MESSAGES.PATIENT_UPDATED;
   }
 
@@ -94,26 +123,6 @@ export class PatientService {
     });
     if (!foundPatient)
       throw new NotFoundException(PATIENT_ERROR_MESSAGES.PATIENT_NOT_FOUND);
-    return foundPatient;
-  }
-
-  private async findOneWithRelations(id: string) {
-    const foundPatient = await this.patientRepository.findOne({
-      where: { id },
-      relations: [
-        'conditions',
-        'currentMedications',
-        'familyBackground',
-        'familyBackground.familyMemberBackgrounds',
-        'symptomsPresent',
-        'cognitiveEvaluation',
-      ],
-    });
-
-    if (!foundPatient) {
-      throw new NotFoundException(PATIENT_ERROR_MESSAGES.PATIENT_NOT_FOUND);
-    }
-
     return foundPatient;
   }
 }
