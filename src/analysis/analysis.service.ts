@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { Analysis, Image, ImageAnalysis } from './entities';
 import { Patient } from 'src/patient/entities';
 import { ANALYSIS_SUCCESS_MESSAGES } from './constants';
-import { PATIENT_ERROR_MESSAGES } from 'src/patient/constants';
 import { ActivityService } from 'src/activity/activity.service';
 import { ACTIVITY_TYPE } from 'src/activity/constants/enum-values';
 
@@ -95,14 +94,8 @@ export class AnalysisService {
     });
   }
 
-  async findByPatient(patientId: string) {
-    const patient = await this.patientRepository.findOne({
-      where: { id: patientId },
-    });
-
-    if (!patient) {
-      throw new NotFoundException(PATIENT_ERROR_MESSAGES.PATIENT_NOT_FOUND);
-    }
+  async findAnalysiesByPatient(patientId: Patient['id']) {
+    await this.findOnePatientById(patientId);
 
     return await this.analysisRepository.find({
       where: { patient: { id: patientId } },
@@ -127,6 +120,17 @@ export class AnalysisService {
   async remove(id: number) {
     const analysis = await this.findOne(id);
     await this.analysisRepository.remove(analysis);
-    return { message: ANALYSIS_SUCCESS_MESSAGES.ANALYSIS_DELETED };
+    return ANALYSIS_SUCCESS_MESSAGES.ANALYSIS_DELETED;
+  }
+
+  //--- Auxiliar funtions
+  private async findOnePatientById(patientId: Patient['id']) {
+    const patient = await this.patientRepository.findOneBy({ id: patientId });
+    if (!patient)
+      throw new NotFoundException(
+        `Paciente con id: ${patientId} no encontrado`,
+      );
+
+    return patient;
   }
 }

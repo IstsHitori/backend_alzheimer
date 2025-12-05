@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { AnalysisService } from './analysis.service';
 import { CreateAnalysisDto } from './dto/create-analysis.dto';
@@ -35,8 +36,8 @@ export class AnalysisController {
   }
 
   @Get('patient/:id')
-  findOneByPatientId(@Param('id', ParseIntPipe) patientId: string) {
-    return this.analysisService.findByPatient(patientId);
+  findOneByPatientId(@Param('id', ParseUUIDPipe) patientId: string) {
+    return this.analysisService.findAnalysiesByPatient(patientId);
   }
 
   // @Patch(':id')
