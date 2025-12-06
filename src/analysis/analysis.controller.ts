@@ -40,14 +40,6 @@ export class AnalysisController {
     return this.analysisService.findAnalysiesByPatient(patientId);
   }
 
-  // @Patch(':id')
-  // update(
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @Body() updateAnalysisDto: UpdateAnalysisDto,
-  // ) {
-  //   return this.analysisService.update(id, updateAnalysisDto);
-  // }
-
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.analysisService.remove(id);

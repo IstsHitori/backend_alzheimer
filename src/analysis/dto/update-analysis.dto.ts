@@ -1,12 +1,12 @@
 // update-analysis.dto.ts
-import { IsArray, IsNumber, IsOptional, ValidateNested } from 'class-validator';
+import { IsArray, IsOptional, IsUUID, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateImageAnalysisDto } from './create-image-analysis.dto';
 import { ANALYSIS_ERROR_MESSAGES } from '../constants/error-messages';
 
 export class UpdateAnalysisDto {
   @IsOptional()
-  @IsNumber({}, { message: ANALYSIS_ERROR_MESSAGES.PATIENT_ID_NUMBER })
+  @IsUUID('4', { message: ANALYSIS_ERROR_MESSAGES.PATIENT_ID_INVALID })
   patientId?: string;
 
   @IsOptional()

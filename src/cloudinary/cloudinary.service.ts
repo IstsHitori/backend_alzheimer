@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
 import { Inject, Injectable } from '@nestjs/common';
 import { v2 as Cloudinary } from 'cloudinary';
 

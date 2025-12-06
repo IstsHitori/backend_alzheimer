@@ -1,7 +1,7 @@
 export enum ANALYSIS_ERROR_MESSAGES {
   // CreateAnalysisDto
   PATIENT_ID_REQUIRED = 'El ID del paciente es requerido',
-  PATIENT_ID_NUMBER = 'El ID del paciente debe ser un número',
+  PATIENT_ID_INVALID = 'El ID del paciente debe ser un ID válido',
   IMAGE_ANALYSES_ARRAY = 'imageAnalyses debe ser un array',
   IMAGE_ANALYSES_REQUIRED = 'Debe proporcionar al menos un análisis de imagen',
 

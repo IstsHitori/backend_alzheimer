@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAnalysisDto } from './dto/create-analysis.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { Analysis, Image, ImageAnalysis } from './entities';
 import { Patient } from 'src/patient/entities';
 import { ANALYSIS_SUCCESS_MESSAGES } from './constants';
@@ -13,78 +13,45 @@ export class AnalysisService {
   constructor(
     @InjectRepository(Analysis)
     private analysisRepository: Repository<Analysis>,
-    @InjectRepository(Image)
-    private imageRepository: Repository<Image>,
-    @InjectRepository(ImageAnalysis)
-    private imageAnalysisRepository: Repository<ImageAnalysis>,
     @InjectRepository(Patient)
-    private patientRepository: Repository<Patient>,
+    private readonly patientRepository: Repository<Patient>,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
     private readonly activityService: ActivityService,
   ) {}
 
   async create(createAnalysisDto: CreateAnalysisDto, userId: string) {
-    const { patientId, imageAnalysis } = createAnalysisDto;
+    return await this.dataSource.transaction(async manager => {
+      const { patientId, imageAnalysis } = createAnalysisDto;
 
-    // Verificar que el paciente existe
-    const patient = await this.patientRepository.findOne({
-      where: { id: patientId },
-    });
+      const patient = await this.findOnePatientById(patientId);
 
-    if (!patient) {
-      throw new NotFoundException(`Patient with ID ${patientId} not found`);
-    }
-
-    // Crear la sesión de análisis
-    const analysis = this.analysisRepository.create({
-      patient,
-      user: {
-        id: userId,
-      },
-    });
-
-    const savedAnalysis = await this.analysisRepository.save(analysis);
-
-    // Crear los análisis individuales de cada imagen
-    const imageAnalysisEntities: ImageAnalysis[] = [];
-
-    for (const imgAnalysisDto of imageAnalysis) {
-      // Buscar si la imagen ya existe por URL
-      let image = await this.imageRepository.findOne({
-        where: { imageUrl: imgAnalysisDto.imageUrl },
+      // Create analysis entity
+      const analysis = manager.create(Analysis, {
+        patient,
+        user: {
+          id: userId,
+        },
       });
 
-      // Si no existe, crear la imagen
-      if (!image) {
-        image = this.imageRepository.create({
-          imageUrl: imgAnalysisDto.imageUrl,
-          fileName: imgAnalysisDto.fileName,
-        });
-        await this.imageRepository.save(image);
-      }
+      const savedAnalysis = await manager.save(Analysis, analysis);
 
-      // Crear el análisis de la imagen
-      const imageAnalysis = this.imageAnalysisRepository.create({});
+      // Create individual analyses of each image
+      const imageAnalysisEntities = await this.createImageAnalysis(
+        imageAnalysis,
+        savedAnalysis,
+        manager,
+      );
 
-      imageAnalysisEntities.push(imageAnalysis);
-    }
+      //Save all image's analysis
+      await manager.save(ImageAnalysis, imageAnalysisEntities);
 
-    // Guardar todos los análisis de imágenes
-    await this.imageAnalysisRepository.save(imageAnalysisEntities);
+      //Create and save activities
+      await this.saveActivities(imageAnalysisEntities, patient, userId);
 
-    //Generar las actividades
-
-    for (const index of imageAnalysisEntities) {
-      const activity = {
-        title: `Análisis completado - Paciente: ${patient.fullName}`,
-        type: ACTIVITY_TYPE.ANALYSIS,
-        description: `Resultado: ${index.diagnosis}`,
-        userId,
-      };
-      await this.activityService.create(activity);
-    }
-
-    // Retornar el análisis completo
-    return await this.findOne(savedAnalysis.id);
+      // Return complete analysis
+      return await this.findOne(savedAnalysis.id);
+    });
   }
 
   async findAll() {
@@ -132,5 +99,55 @@ export class AnalysisService {
       );
 
     return patient;
+  }
+
+  private async saveActivities(
+    imageAnalysisEntities: ImageAnalysis[],
+    patient: Patient,
+    userId: string,
+  ) {
+    for (const index of imageAnalysisEntities) {
+      const activity = {
+        title: `Análisis completado - Paciente: ${patient.fullName}`,
+        type: ACTIVITY_TYPE.ANALYSIS,
+        description: `Resultado: ${index.diagnosis}`,
+        userId,
+      };
+      await this.activityService.create(activity);
+    }
+  }
+
+  private async createImageAnalysis(
+    imageAnalysis: CreateAnalysisDto['imageAnalysis'],
+    savedAnalysis: Analysis,
+    manager: EntityManager,
+  ) {
+    const imageAnalysisEntities: ImageAnalysis[] = [];
+
+    for (const imgAnalysisDto of imageAnalysis) {
+      // Search if the image already exist
+      let image = await manager.findOne(Image, {
+        where: { imageUrl: imgAnalysisDto.imageUrl },
+      });
+
+      // If does'nt exist, create the image
+      if (!image) {
+        image = manager.create(Image, {
+          imageUrl: imgAnalysisDto.imageUrl,
+          fileName: imgAnalysisDto.fileName,
+        });
+        await manager.save(Image, image);
+      }
+
+      // Create image's analysis
+      const imageAnalysis = manager.create(ImageAnalysis, {
+        image,
+        analysis: savedAnalysis,
+      });
+
+      imageAnalysisEntities.push(imageAnalysis);
+    }
+
+    return imageAnalysisEntities;
   }
 }
