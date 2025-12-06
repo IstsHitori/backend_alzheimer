@@ -84,8 +84,6 @@ export class MedicalQueryService {
       this.getTotalMaleAnalysis(),
       this.getTotalFemaleAnalysis(),
     ]);
-    console.log(male, female);
-
     return { male, female };
   }
 
