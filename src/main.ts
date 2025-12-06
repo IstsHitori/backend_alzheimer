@@ -17,7 +17,10 @@ async function bootstrap() {
   //------
   //Habilitar los cors
   app.enableCors({
-    origin: config.get<string>('API_FRONTEND'),
+    origin: [
+      config.get<string>('API_FRONTEND'),
+      config.get<string>('API_BACKEND_IA'),
+    ],
   });
   // app.useLogger(app.get(Logger));
   app.setGlobalPrefix('api/v1');

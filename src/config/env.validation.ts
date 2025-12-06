@@ -19,6 +19,9 @@ export const ENV_VALIDATION_SCHEMA = joi.object({
     .max(20),
   ADMIN_EMAIL: joi.string().email().required().max(100),
   SEED_ADMIN: joi.boolean().default(true),
+  //APIS
+  API_FRONTEND: joi.string().required(),
+  API_BACKEND_IA: joi.string().required(),
   //JWT
   JWT_SECRET: joi.string().required(),
   //CLOUDINARY
