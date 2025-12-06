@@ -26,17 +26,16 @@ export class AnalysisService {
 
       const patient = await this.findOnePatientById(patientId);
 
-      // Create analysis entity
+      // Create and save analysis entity first
       const analysis = manager.create(Analysis, {
         patient,
         user: {
           id: userId,
         },
       });
-
       const savedAnalysis = await manager.save(Analysis, analysis);
 
-      // Create individual analyses of each image
+      // Create individual analyses of each image with the saved analysis
       const imageAnalysisEntities = await this.createImageAnalysis(
         imageAnalysis,
         savedAnalysis,
@@ -49,14 +48,33 @@ export class AnalysisService {
       //Create and save activities
       await this.saveActivities(imageAnalysisEntities, patient, userId);
 
-      // Return complete analysis
-      return await this.findOne(savedAnalysis.id);
+      // Return complete analysis with relations
+      return await manager.findOne(Analysis, {
+        where: { id: savedAnalysis.id },
+        relations: ['patient', 'user', 'imageAnalysis', 'imageAnalysis.image'],
+        select: {
+          user: {
+            id: true,
+            name: true,
+            userName: true,
+            role: true,
+          },
+        },
+      });
     });
   }
 
   async findAll() {
     return await this.analysisRepository.find({
       relations: ['patient', 'user', 'imageAnalysis', 'imageAnalysis.image'],
+      select: {
+        user: {
+          id: true,
+          name: true,
+          userName: true,
+          role: true,
+        },
+      },
       order: { createdAt: 'DESC' },
     });
   }
@@ -67,6 +85,14 @@ export class AnalysisService {
     return await this.analysisRepository.find({
       where: { patient: { id: patientId } },
       relations: ['user', 'imageAnalysis', 'imageAnalysis.image'],
+      select: {
+        user: {
+          id: true,
+          name: true,
+          userName: true,
+          role: true,
+        },
+      },
       order: { createdAt: 'DESC' },
     });
   }
@@ -75,6 +101,14 @@ export class AnalysisService {
     const analysis = await this.analysisRepository.findOne({
       where: { id },
       relations: ['patient', 'user', 'imageAnalysis', 'imageAnalysis.image'],
+      select: {
+        user: {
+          id: true,
+          name: true,
+          userName: true,
+          role: true,
+        },
+      },
     });
 
     if (!analysis) {
@@ -132,22 +166,36 @@ export class AnalysisService {
 
       // If does'nt exist, create the image
       if (!image) {
-        image = manager.create(Image, {
-          imageUrl: imgAnalysisDto.imageUrl,
-          fileName: imgAnalysisDto.fileName,
-        });
-        await manager.save(Image, image);
+        image = await this.createAndSaveImage(
+          imgAnalysisDto.imageUrl,
+          imgAnalysisDto.fileName,
+          manager,
+        );
       }
 
       // Create image's analysis
       const imageAnalysis = manager.create(ImageAnalysis, {
         image,
         analysis: savedAnalysis,
+        diagnosis: imgAnalysisDto.diagnosis,
+        nonDemented: imgAnalysisDto.nonDemented,
+        veryMildDemented: imgAnalysisDto.veryMildDemented,
+        mildDemented: imgAnalysisDto.mildDemented,
+        moderateDemented: imgAnalysisDto.moderateDemented,
       });
 
       imageAnalysisEntities.push(imageAnalysis);
     }
 
     return imageAnalysisEntities;
+  }
+
+  private async createAndSaveImage(
+    imageUrl: string,
+    fileName: string,
+    manager: EntityManager,
+  ) {
+    const image = manager.create(Image, { imageUrl, fileName });
+    return await manager.save(Image, image);
   }
 }

@@ -79,6 +79,16 @@ export class MedicalQueryService {
     };
   }
 
+  async getTotalAnalysisByGender(): Promise<IAnalysisByGender> {
+    const [male, female] = await Promise.all([
+      this.getTotalMaleAnalysis(),
+      this.getTotalFemaleAnalysis(),
+    ]);
+    console.log(male, female);
+
+    return { male, female };
+  }
+
   private async getTotalLowAlzheimer(): Promise<number> {
     return await this.imageAnalysisRepo.count({
       where: { diagnosis: DIAGNOSIS.VERY_MILD_DEMENTED },
@@ -97,22 +107,14 @@ export class MedicalQueryService {
     });
   }
 
-  async getTotalAnalysisByGender(): Promise<IAnalysisByGender> {
-    const [male, female] = await Promise.all([
-      this.getTotalMaleAnalysis(),
-      this.getTotalFemaleAnalysis(),
-    ]);
-    return { male, female };
-  }
-
   private async getTotalMaleAnalysis(): Promise<number> {
-    return (await this.getAnalysis()).map(
+    return (await this.getAnalysis()).filter(
       analysis => analysis.patient.gender === GENDER.MALE,
     ).length;
   }
 
   private async getTotalFemaleAnalysis(): Promise<number> {
-    return (await this.getAnalysis()).map(
+    return (await this.getAnalysis()).filter(
       analysis => analysis.patient.gender === GENDER.FEMALE,
     ).length;
   }
