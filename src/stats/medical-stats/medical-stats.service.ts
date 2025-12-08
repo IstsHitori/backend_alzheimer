@@ -10,11 +10,11 @@ export class MedicalStatsService {
   ) {}
 
   async getStats(): Promise<IMedicalDashboardStats> {
-    const [resume, analysis] = await Promise.all([
+    const [resumeStats, analysisStats] = await Promise.all([
       this.getResumeStats(),
       this.getAnalysisStats(),
     ]);
-    return { resume, analysis };
+    return { resumeStats, analysisStats };
   }
 
   private async getResumeStats(): Promise<IResume> {

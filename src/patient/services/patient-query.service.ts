@@ -20,7 +20,6 @@ export class PatientQueryService {
         'familyBackgrounds.condition',
         'patientCurrentMedications.currentMedication',
         'symptomsPresent',
-        'analysis.imageAnalysis',
       ],
     });
     return this.formatFindAllPatientResponse(patients);
@@ -108,11 +107,6 @@ export class PatientQueryService {
             updatedAt: patient.cognitiveEvaluation.updatedAt,
           }
         : null,
-      analysis: patient.analysis.map(a => ({
-        id: a.id,
-        analysisDate: a.createdAt,
-        images: a.imageAnalysis?.length || 0,
-      })),
       timestamps: {
         createdAt: patient.createdAt,
         updatedAt: patient.updatedAt,

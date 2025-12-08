@@ -35,6 +35,6 @@ export interface IAccuracyMetrics {
 }
 
 export interface IMedicalDashboardStats {
-  resume: IResume;
-  analysis: IAnalysis;
+  resumeStats: IResume;
+  analysisStats: IAnalysis;
 }

@@ -12,6 +12,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { StatsModule } from './stats/stats.module';
 import { ActivityModule } from './activity/activity.module';
 import { SeedModule } from './seed/seed.module';
+import { CatalogModule } from './catalog/catalog.module';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { SeedModule } from './seed/seed.module';
     StatsModule,
     ActivityModule,
     SeedModule,
+    CatalogModule,
   ],
   controllers: [],
   providers: [],
