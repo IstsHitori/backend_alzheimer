@@ -106,19 +106,19 @@ export class MedicalQueryService {
 
   private async getTotalMaleAnalysis(): Promise<number> {
     return (await this.getAnalysis()).filter(
-      analysis => analysis.patient.gender === GENDER.MALE,
+      analysis => analysis.analysis.patient.gender === GENDER.MALE,
     ).length;
   }
 
   private async getTotalFemaleAnalysis(): Promise<number> {
     return (await this.getAnalysis()).filter(
-      analysis => analysis.patient.gender === GENDER.FEMALE,
+      analysis => analysis.analysis.patient.gender === GENDER.FEMALE,
     ).length;
   }
 
   private async getAnalysis() {
-    return await this.analysisRepo.find({
-      relations: ['patient'],
+    return await this.imageAnalysisRepo.find({
+      relations: ['analysis.patient'],
     });
   }
 }
