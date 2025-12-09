@@ -1,8 +1,8 @@
 import {
   IsArray,
   IsDate,
-  IsDecimal,
   IsEnum,
+  IsInt,
   IsNumber,
   IsObject,
   IsOptional,
@@ -42,17 +42,17 @@ export class UpdatePatientDto {
   birthDate?: Date;
 
   @IsOptional()
-  @IsNumber({}, { message: PATIENT_ERROR_MESSAGES.WEIGHT_NUMBER })
+  @IsInt({ message: PATIENT_ERROR_MESSAGES.WEIGHT_NUMBER })
   @Min(0, { message: PATIENT_ERROR_MESSAGES.WEIGHT_MIN })
   weight?: number;
 
   @IsOptional()
-  @IsDecimal({}, { message: PATIENT_ERROR_MESSAGES.SIZE_DECIMAL })
+  @IsNumber({}, { message: PATIENT_ERROR_MESSAGES.SIZE_DECIMAL })
   @Min(0, { message: PATIENT_ERROR_MESSAGES.SIZE_MIN })
   size?: number;
 
   @IsOptional()
-  @IsDecimal({}, { message: PATIENT_ERROR_MESSAGES.TENSION_DECIMAL })
+  @IsNumber({}, { message: PATIENT_ERROR_MESSAGES.TENSION_DECIMAL })
   @Min(0, { message: PATIENT_ERROR_MESSAGES.TENSION_MIN })
   tension?: number;
 

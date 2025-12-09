@@ -23,7 +23,7 @@ export class MedicalQueryService {
   ) {}
 
   async getTotalAanalysis(): Promise<number> {
-    return await this.analysisRepo.count();
+    return await this.imageAnalysisRepo.count();
   }
 
   async getHealthyCasesAndPercentage(): Promise<IHealthyCases> {
@@ -52,7 +52,6 @@ export class MedicalQueryService {
       }),
       this.getTotalAanalysis(),
     ]);
-
     return {
       cases: alzheimerCases,
       percentaje: this.medicalCalculationService.calculatePercentage(

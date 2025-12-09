@@ -84,6 +84,7 @@ export class PatientQueryService {
       })),
       currentMedications: patient.patientCurrentMedications.map(pcm => ({
         id: pcm.currentMedication.id,
+        expedient: pcm.currentMedication.expedient,
         product: pcm.currentMedication.product,
         laboratory: pcm.currentMedication.headline,
         pharmaceuticalForm: pcm.currentMedication.pharmaceuticalForm,

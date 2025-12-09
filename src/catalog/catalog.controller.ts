@@ -13,21 +13,21 @@ export class CatalogController {
     return this.catalogService.findAllEps();
   }
 
-  @Get('cums')
+  @Get('medications')
   findAllCum(@Query('limit') limit: number, @Query('offset') offset: number) {
     return this.catalogService.findAllCum(limit, offset);
   }
 
-  @Get('cum/search')
+  @Get('medications/search')
   findCum(@Query('search') searchParam: string) {
     return this.catalogService.findCumBySearch(searchParam);
   }
 
-  @Get('cie10')
+  @Get('conditions')
   findAllCIE10() {
     return this.catalogService.findAllCIE10();
   }
-  @Get('cie10/search')
+  @Get('conditions/search')
   findCIE10(@Query('search') searchParam: string) {
     return this.catalogService.findCIE10BySearch(searchParam);
   }

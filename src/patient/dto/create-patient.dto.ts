@@ -2,6 +2,7 @@ import {
   IsArray,
   IsDate,
   IsEnum,
+  IsInt,
   IsNotEmpty,
   IsNumber,
   IsObject,
@@ -40,7 +41,7 @@ export class CreatePatientDto {
   @IsNotEmpty({ message: PATIENT_ERROR_MESSAGES.BIRTH_DATE_REQUIRED })
   birthDate: Date;
 
-  @IsNumber({}, { message: PATIENT_ERROR_MESSAGES.WEIGHT_NUMBER })
+  @IsInt({ message: PATIENT_ERROR_MESSAGES.WEIGHT_NUMBER })
   @IsNotEmpty({ message: PATIENT_ERROR_MESSAGES.WEIGHT_REQUIRED })
   @Min(0, { message: PATIENT_ERROR_MESSAGES.WEIGHT_MIN })
   weight: number;

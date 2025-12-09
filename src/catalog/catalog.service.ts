@@ -18,14 +18,14 @@ export class CatalogService {
     return await this.epsRepository.find();
   }
 
-  async findAllCum(limit: number = 50, offset: number = 0) {
+  async findAllCum(limit: number = 10, offset: number = 0) {
     return await this.currentMedicationRepository.find({
       take: limit,
       skip: offset,
     });
   }
 
-  async findCumBySearch(searchParam: string, limit: number = 50) {
+  async findCumBySearch(searchParam: string, limit: number = 10) {
     const searchTerm = `%${searchParam.toLowerCase()}%`;
 
     return await this.currentMedicationRepository.find({
@@ -37,14 +37,14 @@ export class CatalogService {
     });
   }
 
-  async findAllCIE10(limit: number = 50, offset: number = 0) {
+  async findAllCIE10(limit: number = 10, offset: number = 0) {
     return await this.conditionRepository.find({
       take: limit,
       skip: offset,
     });
   }
 
-  async findCIE10BySearch(searchParam: string, limit: number = 50) {
+  async findCIE10BySearch(searchParam: string, limit: number = 10) {
     const searchTerm = `%${searchParam.toLowerCase()}%`;
     return await this.conditionRepository.find({
       where: [{ name: ILike(searchTerm) }, { code: ILike(searchTerm) }],
