@@ -8,7 +8,6 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ROLE } from 'src/user/constants';
 import { CloudinaryService } from './cloudinary.service';
-
 @Auth(ROLE.ADMIN, ROLE.DOCTOR)
 @Controller('cloudinary')
 export class CloudinaryController {
