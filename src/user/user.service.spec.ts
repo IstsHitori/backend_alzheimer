@@ -93,6 +93,26 @@ describe('UserService', () => {
     expect(userRepository.save).not.toHaveBeenCalled();
   });
 
+  it('throws when creating a second admin user', async () => {
+    const createUserDto = {
+      name: 'Admin Dos',
+      userName: 'admin2',
+      password: 'Secret123!',
+      email: 'admin2@example.com',
+      role: ROLE.ADMIN,
+    };
+
+    userRepository.findOne.mockResolvedValueOnce(null).mockResolvedValueOnce({
+      id: 'admin-existing',
+      role: ROLE.ADMIN,
+    });
+
+    await expect(service.create(createUserDto as any)).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+    expect(hashAdapter.hash).not.toHaveBeenCalled();
+  });
+
   it('updates a user and hashes the password when provided', async () => {
     const existingUser = {
       id: 'user-1',
@@ -124,6 +144,59 @@ describe('UserService', () => {
 
     expect(hashAdapter.hash).toHaveBeenCalledWith('Secret123!');
     expect(userRepository.save).toHaveBeenCalledWith(existingUser);
+  });
+
+  it('throws when updating and email is already in use', async () => {
+    userRepository.findOne.mockResolvedValueOnce({
+      id: 'user-2',
+      email: 'used@mail.com',
+      userName: 'otheruser',
+    });
+
+    await expect(
+      service.update('user-1', { email: 'used@mail.com' } as any),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('throws when updating and username is already in use', async () => {
+    userRepository.findOne.mockResolvedValueOnce({
+      id: 'user-3',
+      email: 'other@mail.com',
+      userName: 'takenuser',
+    });
+
+    await expect(
+      service.update('user-1', { userName: 'takenuser' } as any),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('updates user without password when not provided', async () => {
+    const existingUser = {
+      id: 'user-1',
+      name: 'Ana Perez',
+      userName: 'anap',
+      password: 'old-password',
+      email: 'ana@example.com',
+      role: ROLE.DOCTOR,
+    } as User;
+
+    userRepository.findOne.mockResolvedValueOnce(null);
+    userRepository.findOneBy.mockResolvedValueOnce(existingUser);
+    userRepository.save.mockResolvedValue(existingUser);
+
+    await expect(
+      service.update('user-1', { name: 'Ana Updated' } as any),
+    ).resolves.toBe(USER_SUCCES_MESSAGES.USER_UPDATED);
+
+    expect(hashAdapter.hash).not.toHaveBeenCalled();
+  });
+
+  it('throws when removing a non-existent user', async () => {
+    userRepository.findOneBy.mockResolvedValueOnce(null);
+
+    await expect(service.remove('missing-id')).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
   });
 
   it('removes a user', async () => {
