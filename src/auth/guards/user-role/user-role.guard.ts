@@ -33,7 +33,6 @@ export class UserRoleGuard implements CanActivate {
     if (!validRoles.includes(req.user.role))
       throw new ForbiddenException(AUTH_ERROR_MESSAGES.VALID_ROLE);
 
-    console.log('pasó..');
     return true;
   }
 }

@@ -59,6 +59,13 @@ export class UserService {
     );
     const foundUser = await this.findOne(id);
 
+    if (updateUserDto.password) {
+      const newPasswordHashed = await this.hashAdapter.hash(
+        updateUserDto.password,
+      );
+      updateUserDto.password = newPasswordHashed;
+    }
+
     Object.assign(foundUser, updateUserDto);
 
     await this.userRepository.save(foundUser);
