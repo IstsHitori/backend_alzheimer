@@ -7,7 +7,7 @@ import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [ConfigModule, AuthModule],
-  providers: [CloudinaryService, CloudinaryProvider],
+  providers: [CloudinaryService, CloudinaryProvider, CloudinaryProvider],
   exports: [CloudinaryService],
   controllers: [CloudinaryController],
 })
